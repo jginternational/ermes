@@ -1,2 +1,2 @@
 # ermes
-Ffinite element code in frequency domain.
+Finite element code in frequency domain.
