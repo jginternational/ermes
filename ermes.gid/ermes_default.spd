@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?><!-- -*- coding: utf-8; mode: SGML -*- -->
+
+<ermes_data version='1.0'>
+  <style show_menubutton_about='0' show_menubutton_search='1'>
+  </style>
+  <display_options frame_width="151" is_frame_open="1"/>
+  <!-- units -->
+  <units>
+    <!--by now it is compulsory define this node if units are used (could be empty if defaults are enougth)-->
+  </units>
+
+  <container n="units" pn="Units" icon="darkorange-length-18">
+    <value n='units_mesh' pn='Geometry units' unit_mesh_definition="1"/>
+    <value n='units_system' pn='Units system' units_system_definition="1">
+      <dependencies node="//*[@unit_definition or @unit_mesh_definition='1']" att1='change_units_system' v1='{@v}'/>
+    </value>
+    <container n="basic_units" pn="Basic units" icon="darkorange-length-18" help="Basic units to be used in the analysis.">
+      <value n='units_length' pn='Length' unit_definition="L"/>
+      <value n='units_mass' pn='Mass' unit_definition="M"/>
+    </container>
+  </container>
+
+  <container n="Solving_parameters" pn="Solving parameters">
+    <container n="Frequency" pn="Frequency">
+      <value n="Sweep_frequency" pn="Sweep frequency" v="No" values="Yes,No" help="Activates Frequency sweep mode when checked"/>
+      <container n="Single_frequency_mode" pn="Single frequency mode" help="It is solved only one frequency.">
+        <value n="Frequency" pn="Frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Problem frequency in Hz"/>
+      </container>
+      <container n="Frequency_sweep_mode" pn="Frequency sweep mode" help="It is solved the frequency band specified in the following">
+        <value n="Initial_frequency" pn="Initial frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Starting frequency of the frequency sweep"/>
+        <value n="Final_frequency" pn="Final frequency" v="3e9Hz" unit_magnitude="Frequency" units="Hz" help="Final frequency of the frequency sweep."/>
+        <value n="Step_frequency" pn="Step frequency" v="0.1e9" unit_magnitude="Frequency" units="Hz" help="Step frequency of the frequency sweep."/>
+      </container>
+    </container>
+    <container n="Solvers" pn="Solvers">
+      <value n="Sweep_frequency" pn="Sweep frequency" v="No" values="Yes,No" help="Activates Frequency sweep mode when checked"/>
+      <container n="Single_frequency_mode" pn="Single frequency mode" help="It is solved only one frequency.">
+        <value n="Frequency" pn="Frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Problem frequency in Hz"/>
+      </container>
+      <container n="Frequency_sweep_mode" pn="Frequency sweep mode" help="It is solved the frequency band specified in the following">
+        <value n="Initial_frequency" pn="Initial frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Starting frequency of the frequency sweep"/>
+        <value n="Final_frequency" pn="Final frequency" v="3e9Hz" unit_magnitude="Frequency" units="Hz" help="Final frequency of the frequency sweep."/>
+        <value n="Step_frequency" pn="Step frequency" v="0.1e9" unit_magnitude="Frequency" units="Hz" help="Step frequency of the frequency sweep."/>
+      </container>
+    </container>
+  </container>
+
+  <!-- conditions -->
+  <condition n="Point_Weight" pn="Point Weight" ov="point" ovm="node" icon="darkorange-weight-18" groups_icon="yelowish-group" help="Concentrated mass">
+    <value n="Weight" pn="Weight" v="0.0" unit_magnitude="M" units="kg" help="Specify the weight that you want to apply"/>
+    <value n="Weight1" pn="Weight1" v="0.0" unit_magnitude="M" units="kg" help="Specify the weight that you want to apply" show_in_window="0"/>
+    <symbol proc="gid_groups_conds::draw_symbol_image weight-18.png" orientation="global"/>
+    <!-- or a more customized example implementing our own procecedure <symbol proc='Cmas2d::DrawSymbolWeigth' orientation='global'/> -->
+  </condition>
+
+  <!-- properties -->
+  <container n="Properties" pn="Properties" icon="darkorange-shellfish-18" help="Define your materials database and apply them to the surfaces of your problem">
+    <condition n="Shells" pn="Shells" ov="surface" ovm="element" icon="darkorange-shellfish-18" groups_icon="yelowish-group" help="Select your material and the surfaces related to it">
+      <value n="material" pn="Material" editable='0' help="Choose a material from the database" values_tree='[GetMaterialsList]'>
+        <edit_command n="Edit materials" pn="Edit materials" icon="darkorange-block1.png" proc='EditDatabaseList'/>
+      </value>
+    </condition>
+    <include path="xml/materials.xml"/>
+  </container>
+
+  <!-- procs -->
+  <procs>
+    <proc n='GetMaterialsList' args='args'>
+      <![CDATA[
+      Cmas2d::GetMaterialsList $domNode $args
+      ]]>
+    </proc>
+    <proc n='EditDatabaseList' args='args'>
+      <![CDATA[
+      Cmas2d::EditDatabaseList $domNode $dict $boundary_conds $args
+      ]]>
+    </proc>
+  </procs>
+</ermes_data>
