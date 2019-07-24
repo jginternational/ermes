@@ -22,58 +22,39 @@
 
   <container n="Solving_parameters" pn="Solving parameters">
     <container n="Frequency" pn="Frequency">
-      <value n="Sweep_frequency" pn="Sweep frequency" v="No" values="Yes,No" help="Activates Frequency sweep mode when checked"/>
+      <value n="Sweep_frequency" pn="Frequency mode" v="Single" values="Single,Sweep" help="Activates Frequency sweep mode when checked">
+        <dependencies value="Sweep" node="../container[@n='Single_frequency_mode']" att1="state" v1='hidden'/>
+        <dependencies value="Sweep" node="../container[@n='Frequency_sweep_mode']" att1="state" v1='normal'/>
+        <dependencies value="Single" node="../container[@n='Single_frequency_mode']" att1="state" v1='normal'/>
+        <dependencies value="Single" node="../container[@n='Frequency_sweep_mode']" att1="state" v1='hidden'/>
+      </value>
       <container n="Single_frequency_mode" pn="Single frequency mode" help="It is solved only one frequency.">
         <value n="Frequency" pn="Frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Problem frequency in Hz"/>
       </container>
-      <container n="Frequency_sweep_mode" pn="Frequency sweep mode" help="It is solved the frequency band specified in the following">
+      <container n="Frequency_sweep_mode" pn="Frequency sweep mode" help="It is solved the frequency band specified in the following" state="hidden">
         <value n="Initial_frequency" pn="Initial frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Starting frequency of the frequency sweep"/>
         <value n="Final_frequency" pn="Final frequency" v="3e9Hz" unit_magnitude="Frequency" units="Hz" help="Final frequency of the frequency sweep."/>
         <value n="Step_frequency" pn="Step frequency" v="0.1e9" unit_magnitude="Frequency" units="Hz" help="Step frequency of the frequency sweep."/>
       </container>
     </container>
     <container n="Solvers" pn="Solvers">
-      <value n="Sweep_frequency" pn="Sweep frequency" v="No" values="Yes,No" help="Activates Frequency sweep mode when checked"/>
-      <container n="Single_frequency_mode" pn="Single frequency mode" help="It is solved only one frequency.">
-        <value n="Frequency" pn="Frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Problem frequency in Hz"/>
-      </container>
-      <container n="Frequency_sweep_mode" pn="Frequency sweep mode" help="It is solved the frequency band specified in the following">
-        <value n="Initial_frequency" pn="Initial frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Starting frequency of the frequency sweep"/>
-        <value n="Final_frequency" pn="Final frequency" v="3e9Hz" unit_magnitude="Frequency" units="Hz" help="Final frequency of the frequency sweep."/>
-        <value n="Step_frequency" pn="Step frequency" v="0.1e9" unit_magnitude="Frequency" units="Hz" help="Step frequency of the frequency sweep."/>
-      </container>
+      <value n="Solver_type" pn="Solver type" v="Quasi_Minimal_Residual" values="Quasi_Minimal_Residual,Bi_Conjugate_Gradient,Conjugate_Gradient,External_solver" help="Method used in the solution of the linear system."/>
+      <value n="Processors" pn="Processors" v="1" values="1,2,3,4,5,6,7,8,9,10" help="Number of processors used by the iterative solver"/>
+      <value n="Tolerance" pn="Tolerance" v="1e-4" values="1e-3,1e-4,1e-5,1e-6,1e-9,1e-12,custom" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
+      <value n="Tol" pn="Custom tolerance" v="1e-4" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
+      <value n="Preconditioner" pn="Preconditioner" v="Diagonal" values="Diagonal,Identity" help="Preconditioning improves convergence of iterative solvers."/>
+      <value n="Max_iterations" pn="Max iterations" v="1e-4" values="1e3,1e4,1e5,1e6,custom" help="Maximum number of iterations allowed for the linear solver."/>
+      <value n="Max_It" pn="Custom max iterations" v="1e-6" />
+      <value n="Iteration_step" pn="Max iterations" v="250" values="50,100,250,500,1000,custom" help="Iteration step showed in the info file."/>
+      <value n="It_Step" pn="Custom iteration step" v="250" />
+      <value n="Initial_guess" pn="Initial guess" v="Nil_vector" values="Nil_vector,Read_file" help="Read a file with an initial guess for the iterative solver"/>
+      <value n="Results_in_file" pn="Results in file" v="Final_step" values="No,Every_step,Final_step" help="Write the vector x in a file."/>
+
     </container>
-  </container>
-
-  <!-- conditions -->
-  <condition n="Point_Weight" pn="Point Weight" ov="point" ovm="node" icon="darkorange-weight-18" groups_icon="yelowish-group" help="Concentrated mass">
-    <value n="Weight" pn="Weight" v="0.0" unit_magnitude="M" units="kg" help="Specify the weight that you want to apply"/>
-    <value n="Weight1" pn="Weight1" v="0.0" unit_magnitude="M" units="kg" help="Specify the weight that you want to apply" show_in_window="0"/>
-    <symbol proc="gid_groups_conds::draw_symbol_image weight-18.png" orientation="global"/>
-    <!-- or a more customized example implementing our own procecedure <symbol proc='Cmas2d::DrawSymbolWeigth' orientation='global'/> -->
-  </condition>
-
-  <!-- properties -->
-  <container n="Properties" pn="Properties" icon="darkorange-shellfish-18" help="Define your materials database and apply them to the surfaces of your problem">
-    <condition n="Shells" pn="Shells" ov="surface" ovm="element" icon="darkorange-shellfish-18" groups_icon="yelowish-group" help="Select your material and the surfaces related to it">
-      <value n="material" pn="Material" editable='0' help="Choose a material from the database" values_tree='[GetMaterialsList]'>
-        <edit_command n="Edit materials" pn="Edit materials" icon="darkorange-block1.png" proc='EditDatabaseList'/>
-      </value>
-    </condition>
-    <include path="xml/materials.xml"/>
   </container>
 
   <!-- procs -->
   <procs>
-    <proc n='GetMaterialsList' args='args'>
-      <![CDATA[
-      Cmas2d::GetMaterialsList $domNode $args
-      ]]>
-    </proc>
-    <proc n='EditDatabaseList' args='args'>
-      <![CDATA[
-      Cmas2d::EditDatabaseList $domNode $dict $boundary_conds $args
-      ]]>
-    </proc>
+
   </procs>
 </ermes_data>
