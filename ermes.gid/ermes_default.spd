@@ -21,6 +21,22 @@
   </container>
 
   <container n="Solving_parameters" pn="Solving parameters">
+    <container n="General" pn="General">
+      <value n="Dimension" pn="Dimension" v="3D" values="3D,3D-Exy,3D-Ez,3D-Ea" help="If dimension is 3D-Exy, solves Ex and Ey and makes Ez equal to cero in all the domain. If dimension is 3D-Ez, solves only Ez and makes Ex and Ey equal to cero in all the domain (in this mode, the PMC condition makes symmetric contact normals and the PEC condition makes zero the electric field in the PEC surface). If dimension is 3D-Ea, solves only Ea like in an axisymmetric problem (Y axis), making Ephi and Er equal to cero (in this mode, the PEC condition makes zero the electric field in the PEC surface)."/>
+      <value n="Normal_type" pn="Normal type" v="Area_weighted" values="Area_weighted,Geometric_average" help="Different ways to average normals. Area_weighted gives an average normal weighted with the area of the elements. Geometric_average only takes into account the geometry, not the area of the elements."/>
+      <value n="Length_factor" pn="Length factor" v="m" values="m,dm,cm,mm,custom" help="Multiplicative factor for all length values" >
+        <dependencies value="custom" node="../value[@n='LFactor']" att1="state" v1='normal'/>
+        <dependencies condition="@v!='custom'" node="../value[@n='LFactor']" att1="state" v1='hidden'/>
+      </value>
+      <value n="LFactor" pn="Custom length factor" v="1m" help="Multiplicative factor for all length values"  state="hidden"/>
+      <value n="PBC_tolerance" pn="PBC tolerance" v="1e-6" values="1e-3,1e-4,1e-5,1e-6,1e-9,1e-12,custom" help="Tolerance applied in the PBC condition surfaces when comparing points"  >
+        <dependencies value="custom" node="../value[@n='PBC_tol']" att1="state" v1='normal'/>
+        <dependencies condition="@v!='custom'" node="../value[@n='PBC_tol']" att1="state" v1='hidden'/>
+      </value>
+      <value n="PBC_tol" pn="Custom PBC tolerance" v="1e-3" help="Tolerance applied in the PBC condition surfaces when comparing points"  state="hidden" />
+      <value n="Element_order" pn="Element_order" v="2nd" values="1st,2nd,3rd,4th" help="Lagrangian elements order." />
+
+    </container>
     <container n="Frequency" pn="Frequency">
       <value n="Sweep_frequency" pn="Frequency mode" v="Single" values="Single,Sweep" help="Activates Frequency sweep mode when checked">
         <dependencies value="Sweep" node="../container[@n='Single_frequency_mode']" att1="state" v1='hidden'/>
@@ -38,18 +54,25 @@
       </container>
     </container>
     <container n="Solvers" pn="Solvers">
-      <value n="Solver_type" pn="Solver type" v="Quasi_Minimal_Residual" values="Quasi_Minimal_Residual,Bi_Conjugate_Gradient,Conjugate_Gradient,External_solver" help="Method used in the solution of the linear system."/>
-      <value n="Processors" pn="Processors" v="1" values="1,2,3,4,5,6,7,8,9,10" help="Number of processors used by the iterative solver"/>
-      <value n="Tolerance" pn="Tolerance" v="1e-4" values="1e-3,1e-4,1e-5,1e-6,1e-9,1e-12,custom" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
-      <value n="Tol" pn="Custom tolerance" v="1e-4" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
-      <value n="Preconditioner" pn="Preconditioner" v="Diagonal" values="Diagonal,Identity" help="Preconditioning improves convergence of iterative solvers."/>
-      <value n="Max_iterations" pn="Max iterations" v="1e-4" values="1e3,1e4,1e5,1e6,custom" help="Maximum number of iterations allowed for the linear solver."/>
-      <value n="Max_It" pn="Custom max iterations" v="1e-6" />
-      <value n="Iteration_step" pn="Max iterations" v="250" values="50,100,250,500,1000,custom" help="Iteration step showed in the info file."/>
-      <value n="It_Step" pn="Custom iteration step" v="250" />
-      <value n="Initial_guess" pn="Initial guess" v="Nil_vector" values="Nil_vector,Read_file" help="Read a file with an initial guess for the iterative solver"/>
-      <value n="Results_in_file" pn="Results in file" v="Final_step" values="No,Every_step,Final_step" help="Write the vector x in a file."/>
+      <value n="Solver_type" pn="Solver type" v="Quasi_Minimal_Residual" values="Quasi_Minimal_Residual,Bi_Conjugate_Gradient,Conjugate_Gradient,External_solver" help="Method used in the solution of the linear system.">
+        <dependencies value="External_solver" node="../value[@n!='Solver_type' and @solver_type='External_solver']" att1="state" v1='normal'/>
+        <dependencies value="External_solver" node="../value[@n!='Solver_type' and @solver_type!='External_solver']" att1="state" v1='hidden'/>
+        <dependencies condition="@v!='External_solver'" node="../value[@n!='Solver_type' and @solver_type='External_solver']" att1="state" v1='hidden'/>
+        <dependencies condition="@v!='External_solver'" node="../value[@n!='Solver_type' and @solver_type!='External_solver']" att1="state" v1='normal'/>
+      </value>
+      <value n="Processors" pn="Processors" solver_type="standard" v="1" values="1,2,3,4,5,6,7,8,9,10" help="Number of processors used by the iterative solver"/>
+      <value n="Tolerance" pn="Tolerance" solver_type="standard" v="1e-4" values="1e-3,1e-4,1e-5,1e-6,1e-9,1e-12,custom" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
+      <value n="Tol" pn="Custom tolerance" solver_type="standard" v="1e-4" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
+      <value n="Preconditioner" pn="Preconditioner" solver_type="standard" v="Diagonal" values="Diagonal,Identity" help="Preconditioning improves convergence of iterative solvers."/>
+      <value n="Max_iterations" pn="Max iterations" solver_type="standard" v="1e-4" values="1e3,1e4,1e5,1e6,custom" help="Maximum number of iterations allowed for the linear solver."/>
+      <value n="Max_It" pn="Custom max iterations" solver_type="standard" v="1e-6" />
+      <value n="Iteration_step" pn="Max iterations" solver_type="standard" v="250" values="50,100,250,500,1000,custom" help="Iteration step showed in the info file."/>
+      <value n="It_Step" pn="Custom iteration step" solver_type="standard" v="250" />
+      <value n="Initial_guess" pn="Initial guess" solver_type="standard" v="Nil_vector" values="Nil_vector,Read_file" help="Read a file with an initial guess for the iterative solver"/>
+      <value n="Results_in_file" pn="Results in file" solver_type="standard" v="Final_step" values="No,Every_step,Final_step" help="Write the vector x in a file."/>
 
+      <value n="Solver_path" pn="Solver path" solver_type="External_solver" v="C:\\MATLAB7\\bin\\win32\\MATLAB.exe" help="Path of the external solver." state="hidden" />
+      <value n="Input_parameters" pn="Input parameters" solver_type="External_solver" v="-nosplash -nodesktop -minimize -r MatLabSolverERMESv7p0" help="Paramaters needed for the external solver." state="hidden"/>
     </container>
   </container>
 
