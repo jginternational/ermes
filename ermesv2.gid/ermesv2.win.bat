@@ -4,4 +4,4 @@ del %2\%1.log
 del %2\%1.post.res
 del %2\%1.post.dat
 del %2\%1.err
-%3\exec\cmas2d-windows.exe %2\%1
+%3\exec\win\ERMES_20.0.4.exe %1 > %2\%1.info
