@@ -5,7 +5,7 @@ proc GiD_Event_InitProblemtype { dir } {
     Ermes::SetDir $dir ;#store to use it later
     Ermes::ModifyMenus
     gid_groups_conds::open_conditions menu
-    Ermes::CreateWindow  ;#create a window as Tcl example (random surface creation)       
+          
 }
 
 proc GiD_Event_ChangedLanguage { language } {

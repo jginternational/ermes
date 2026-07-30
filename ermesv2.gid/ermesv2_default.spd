@@ -3,81 +3,992 @@
 <ermes_data version='1.0'>
   <style show_menubutton_about='0' show_menubutton_search='1'>
   </style>
-  <display_options frame_width="151" is_frame_open="1"/>
-  <!-- units -->
+  <display_options frame_width="320" is_frame_open="1"/>
   <units>
-    <!--by now it is compulsory define this node if units are used (could be empty if defaults are enougth)-->
   </units>
 
   <container n="units" pn="Units" icon="darkorange-length-18">
-    <value n='units_mesh' pn='Geometry units' unit_mesh_definition="1"/>
-    <value n='units_system' pn='Units system' units_system_definition="1">
+    <value n='units_mesh' pn='Geometry units' unit_mesh_definition='1'/>
+    <value n='units_system' pn='Units system' units_system_definition='1'>
       <dependencies node="//*[@unit_definition or @unit_mesh_definition='1']" att1='change_units_system' v1='{@v}'/>
     </value>
     <container n="basic_units" pn="Basic units" icon="darkorange-length-18" help="Basic units to be used in the analysis.">
-      <value n='units_length' pn='Length' unit_definition="L"/>
-      <value n='units_mass' pn='Mass' unit_definition="M"/>
+      <value n='units_length' pn='Length' unit_definition='L'/>
+      <value n='units_mass' pn='Mass' unit_definition='M'/>
     </container>
   </container>
 
   <container n="Solving_parameters" pn="Solving parameters">
     <container n="General" pn="General">
-      <value n="Dimension" pn="Dimension" v="3D" values="3D,3D-Exy,3D-Ez,3D-Ea" help="If dimension is 3D-Exy, solves Ex and Ey and makes Ez equal to cero in all the domain. If dimension is 3D-Ez, solves only Ez and makes Ex and Ey equal to cero in all the domain (in this mode, the PMC condition makes symmetric contact normals and the PEC condition makes zero the electric field in the PEC surface). If dimension is 3D-Ea, solves only Ea like in an axisymmetric problem (Y axis), making Ephi and Er equal to cero (in this mode, the PEC condition makes zero the electric field in the PEC surface)."/>
-      <value n="Normal_type" pn="Normal type" v="Area_weighted" values="Area_weighted,Geometric_average" help="Different ways to average normals. Area_weighted gives an average normal weighted with the area of the elements. Geometric_average only takes into account the geometry, not the area of the elements."/>
-      <value n="Length_factor" pn="Length factor" v="m" values="m,dm,cm,mm,custom" help="Multiplicative factor for all length values" >
-        <dependencies value="custom" node="../value[@n='LFactor']" att1="state" v1='normal'/>
-        <dependencies condition="@v!='custom'" node="../value[@n='LFactor']" att1="state" v1='hidden'/>
+      <value n="Problem_mode" pn="Problem mode" v="Full_wave" values="Full_wave,Electrostatic,Cold_plasma" help="Available problem modes:\n- &apos;Full_wave&apos;: for solving problems in frequency domain with IHL materials.\n- &apos;Electrostatic&apos;: for solving electrostatic problems.\n- &apos;Cold_plasma&apos;: for solving time-harmonic problems with a cold plasma.">
       </value>
-      <value n="LFactor" pn="Custom length factor" v="1m" help="Multiplicative factor for all length values"  state="hidden"/>
-      <value n="PBC_tolerance" pn="PBC tolerance" v="1e-6" values="1e-3,1e-4,1e-5,1e-6,1e-9,1e-12,custom" help="Tolerance applied in the PBC condition surfaces when comparing points"  >
-        <dependencies value="custom" node="../value[@n='PBC_tol']" att1="state" v1='normal'/>
-        <dependencies condition="@v!='custom'" node="../value[@n='PBC_tol']" att1="state" v1='hidden'/>
+      <value n="Symmetry" pn="Symmetry" v="3D" values="3D,XY,ZZ,AY" help="Symmetry conditions applied to the main field across the entire problem \ndomain. The main field can be either E or A, depending on the selected \nFEM formulation. Available options are:\n\n- &apos;3D&apos;: for solving a general three-dimensional problem.\n\n- &apos;XY&apos;: for solving only the X- and Y-components of the main field, while \n   setting the Z-component to zero throughout the entire domain. This \n   symmetry is only available in &quot;Full_wave&quot; mode and is not supported \n   for edge element formulations.\n\n- &apos;ZZ&apos;: for solving only the Z-component of the main field, while setting \n   the X- and Y-component to zero throughout the entire domain. The \n   main field is set to zero on all PEC surfaces. This symmetry is only available \n   in &quot;Full_wave&quot; mode and is not supported for edge element formulations.\n\n- &apos;AY&apos;: for solving an axisymmetric problem around the Y axis, with the \n   angular and radial components of the main field set to zero throughout \n   the entire domain. The main field is set to zero on all PEC surfaces. This \n   symmetry is only available in &quot;Full_wave&quot; mode and is not supported \n   for edge element formulations.\n">
       </value>
-      <value n="PBC_tol" pn="Custom PBC tolerance" v="1e-3" help="Tolerance applied in the PBC condition surfaces when comparing points"  state="hidden" />
-      <value n="Element_order" pn="Element_order" v="2nd" values="1st,2nd,3rd,4th" help="Lagrangian elements order." />
-
+      <value n="Element_type" pn="Element type" v="EDG_1st" values="EDG_1st,EDG_2nd,RME_1st,RME_2nd,LL2P_3sb" help="FEM formulation and element order:\n- &apos;EDG_1st&apos;: double-curl edge formulation with 1st order elements.\n- &apos;EDG_2nd&apos;: double-curl edge formulation with 2nd order elements.\n- &apos;RME_1st&apos;: regularized Maxwell equations method with 1st order nodal elements.\n- &apos;RME_2nd&apos;: regularized Maxwell equations method with 2nd order nodal elements.\n- &apos;LL2P_3sb&apos;: local L2 projection method with 1st order nodal elements enriched with\n    three surface bubbles plus an inner volumetric bubble.">
+      </value>
+      <value n="Potentials" pn="Potentials" v="Off" values="On,Off" help="Selects between two different versions of the chosen FEM formulation:\n- &apos;On&apos;: the problem is solved using the A-V potentials version.\n- &apos;Off&apos;: the problem is solved using the E-field version.">
+      </value>
+      <value n="RME_stabilize" pn="RME stabilize" v="On" values="On,Off" help="Maintains or removes the divergence term throughout the entire domain \nin the regularized and LL2P formulations:\n- &apos;On&apos;: maintains the divergence term.\n- &apos;Off&apos;: removes the divergence term throughout the entire domain.">
+      </value>
+      <value n="EDG_stabilize" pn="EDG stabilize" v="Off" values="On,Off" help="Adds a stabilization term to the double-curl formulation:\n- &apos;On&apos;: the problem is solved with the stabilized term.\n- &apos;Off&apos;: the problem is solved without the stabilization term.">
+      </value>
+      <value n="LL2P_stabilize" pn="LL2P stabilize" v="Off" values="On,Off" help="Adds a stabilization term to the LL2P formulation:\n- &apos;On&apos;: the problem is solved with the stabilized term.\n- &apos;Off&apos;: the problem is solved without the stabilization term.">
+      </value>
+      <value n="Results_mode" pn="Results mode" v="Nodes" values="Nodes,GP_1,GP_4" help="Selects between three different results visualization modes:\n- &apos;Nodes&apos;: the results are given at the nodes.\n- &apos;GP_1&apos;: the results are given at the central Gauss points of the elements.\n- &apos;GP_4&apos;: the results are given at four internal Gauss points of the elements.">
+      </value>
+      <value n="LL2P_smooth" pn="LL2P smooth" v="Off" values="On,Off" help="Smooths the solution of the LL2P method. This option is useful for mitigating numerical \noscillations that can arise because of oversampling when using bubble elements:\n- &apos;On&apos;: the smoothing is applied to the LL2P solution.\n- &apos;Off&apos;: the smoothing is not applied to the LL2P solution.">
+      </value>
+      <value n="Solving_mode" pn="Solving mode" v="Release" values="Release,Debug,Read" help="Selects between three different solving modes:\n\n- &apos;Release&apos;: the problem is solved normally.\n\n- &apos;Debug&apos;: the problem is not solved, but some results are generated for debugging purposes. \n    This option is useful for verifying that the cold plasma is properly set up or ensuring that \n    the contact elements are well defined.\n\n- &apos;Read&apos;: the problem is not solved, but new results are generated after reading the &quot;Vector_Xo.bin&quot; \n    file calculated previously. This option will create a new results file and is useful for adding \n    results that were previously overlooked.\n">
+      </value>
+    </container>
+    <container n="Geometry" pn="Geometry">
+      <value n="Length_units" pn="Length units" v="m" values="m,dm,cm,mm,custom" help="Multiplicative factor applied to all length values.">
+        <dependencies value="custom" node="../value[@n='custom_L_factor']" att1="state" v1="normal"/>
+        <dependencies condition="@v!='custom'" node="../value[@n='custom_L_factor']" att1="state" v1="hidden"/>
+      </value>
+      <value n="custom_L_factor" pn="custom L factor" v="1.0" help="Custom multiplicative factor applied to all length values." state="hidden">
+      </value>
+      <value n="Geo_error_tol" pn="Geo error tol" v="1e-9" values="0.0,1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8,1e-9,1e-10,1e-11,1e-12" help="Error tolerance for GiD geometric objects. \nThis setting can help ensure accurate axis \nalignment in axisymmetric simulations.">
+      </value>
+      <value n="Normals_type" pn="Normals type" v="Area_weighted" values="Area_weighted,Geometric_average" help="Criteria for computing the normals on PEC, PMC, and contact surfaces: \n\n- &apos;Area_weighted&apos;: normals are calculated using a surface-weighted \n    average. \n\n- &apos;Geometric_average&apos;: normals are calculated as the average of the \n    surrounding element normals, ignoring their relative sizes.\n">
+      </value>
+      <value n="AV_continuity" pn="AV continuity" v="On" values="On,Off" help="Allows for continuous or discontinuous normal components of the vector potential A \nacross material interfaces: \n- &apos;On&apos;: the normal component of A is continuous across interfaces. \n- &apos;Off&apos;: the normal component of A can be discontinuous across interfaces. ">
+      </value>
+      <value n="LL2P_keep_div" pn="LL2P keep div" v="On" values="On,Off" help="Preserves or removes the divergence term of the LL2P formulation inside the ungauged layers \nwhen collapsing bubbles with the &apos;Singularities&apos; Dirichlet condition: \n\n- &apos;On&apos;: the divergence term is preserved inside the ungauged layers. \n- &apos;Off&apos;: the divergence term is removed inside the ungauged layers. \n\nThis condition applies only to ungauged layers and is independent of the &apos;RME stabilize&apos; setting, \nwhich can remove the divergence term throughout the entire domain.">
+      </value>
+      <value n="Contact_detect" pn="Contact detect" v="Manual" values="Manual,Ignore" help="This setting provides the option to consider or disregard meshed \ncontact volumes in the analysis: \n- &apos;Manual&apos;: all the meshed contact volumes are considered.\n- &apos;Ignore&apos;  : all the contact volumes are ignored.">
+      </value>
+      <value n="PBC_symmetry" pn="PBC symmetry" v="Periodic" values="Periodic,Cyclic" help="Type of Periodic Boundary Condition (PBC) used in the simulation: \n- &apos;Periodic&apos;: the right face is parallel to the left face.\n- &apos;Cyclic&apos;: the right face is tilted relative to the left face.">
+      </value>
+      <value n="PBC_FB_pha_dif" pn="PBC FB pha dif" v="0.0" help="Phase difference between front and back PBC surfaces:  \nEfront = Eback * exp( j * PhaseDiff ), with \nPhaseDiff = PhaseFront - PhaseBack in radians.">
+      </value>
+      <value n="PBC_RL_pha_dif" pn="PBC RL pha dif" v="0.0" help="Phase difference between right and left PBC surfaces:  \nEright = Eleft * exp( j * PhaseDiff ), with \nPhaseDiff = PhaseRight - PhaseLeft in radians.">
+      </value>
+    </container>
+    <container n="Import/Export" pn="Import/Export">
+      <value n="Import_Robin_flux" pn="Import Robin flux" v="Off" values="On,Off" help="Imports a generic Robin boundary condition from a set of files.  \nThese files must be located in the problem folder and named  \n&apos;Matrix_P_IRBC.bin&apos; and &apos;Vector_U_IRBC.bin&apos;. An example of how  \nto generate these files is provided in the &apos;Import_Scripts&apos; folder  \nwithin the &apos;Documents&apos; directory of this problem type. Two  \noptions are available:  \n\n- &apos;On&apos;: applies the boundary condition defined in the files.  \n\n- &apos;Off&apos;: does not apply the boundary condition.  \n">
+      </value>
+      <value n="Import_J_currents" pn="Import J currents" v="Off" values="On,Off" help="Imports a volumetric current distribution J from a set of files.  \nThese files must be located in the &apos;Export_J_Sources&apos; folder  \nwithin the problem directory and follow the naming convention  \n&apos;Jsource-*.dat&apos;, where * is an integer index. See the manual for  \nmore details on the files format. Two options are available:  \n\n- &apos;On&apos;: reads all files matching &apos;Jsource-*.dat&apos;.  \n\n- &apos;Off&apos;: no file is read.  \n">
+      </value>
+      <value n="Import_ele_matrix" pn="Import ele matrix" v="Off" values="On,Off" help="Imports volumetric element matrices and vectors from a set  \nof files. These files must be named &apos;Matrix_K_IVEM.bin&apos; and  \n&apos;Vector_R_IVEM.bin&apos; and must be located within the problem  \nfolder. An example of how to generate these files is provided  \nin the &apos;\\Documents\\Import_Scripts&apos; directory of this problem  \ntype. Two options are available:  \n\n- &apos;On&apos;: imports volumetric element systems from files.  \n\n- &apos;Off&apos;: does not import volumetric element systems.  \n">
+      </value>
+      <value n="Export_fields" pn="Export fields" v="Off" values="On,Off" help="The complex results for E, H, B and J are saved in individual files within the problem folder &apos;Fields&apos;. \nThese files store the Cartesian components of the fields at all nodes within the surfaces and volumes \nselected in &apos;Field_integrals&apos;. Additionally, two more files are saved, providing the list of nodes and \nelements associated with each selected surface and volume. Two options are available: \n\n- &apos;On&apos;: the fields, along with the lists of nodes and elements for each selected surface and volume, \n   are written to separate files in the problem folder &apos;Fields&apos;. \n\n- &apos;Off&apos;: no files are generated to store the fields data.\n">
+      </value>
+      <value n="Output_format" pn="Output format" v="Binary" values="Binary,Ascii" help="Two possible formats for the results files: \n\n- &apos;Binary&apos;: a single binary file &apos;.flavia.res&apos; is written, containing \n   both results and mesh data. This format saves disk space \n   and is faster to read by GiD, but requires custom scripts for \n   human user interpretation. \n\n- &apos;Ascii&apos;: two ASCII files are written: &apos;.res&apos; for results and &apos;.msh&apos; \n   for mesh data. These files can be easily read by the user, but \n   they are less space-efficient and slower to read by GiD.\n">
+      </value>
     </container>
     <container n="Frequency" pn="Frequency">
-      <value n="Sweep_frequency" pn="Frequency mode" v="Single" values="Single,Sweep" help="Activates Frequency sweep mode when checked">
-        <dependencies value="Sweep" node="../container[@n='Single_frequency_mode']" att1="state" v1='hidden'/>
-        <dependencies value="Sweep" node="../container[@n='Frequency_sweep_mode']" att1="state" v1='normal'/>
-        <dependencies value="Single" node="../container[@n='Single_frequency_mode']" att1="state" v1='normal'/>
-        <dependencies value="Single" node="../container[@n='Frequency_sweep_mode']" att1="state" v1='hidden'/>
+      <value n="Angular_frequency_mode" pn="Angular frequency mode" v="1" values="0,1" help="- If this option is selected, the problem is solved for one angular \n   frequency w = 2*pi*f, being f the value provided in &apos;Frequency&apos;. \n\n- All the fields are assumed to be time-harmonic. \n\n- This is the default mode. \n">
       </value>
-      <container n="Single_frequency_mode" pn="Single frequency mode" help="It is solved only one frequency.">
-        <value n="Frequency" pn="Frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Problem frequency in Hz"/>
-      </container>
-      <container n="Frequency_sweep_mode" pn="Frequency sweep mode" help="It is solved the frequency band specified in the following" state="hidden">
-        <value n="Initial_frequency" pn="Initial frequency" v="1e9" unit_magnitude="Frequency" units="Hz" help="Starting frequency of the frequency sweep"/>
-        <value n="Final_frequency" pn="Final frequency" v="3e9Hz" unit_magnitude="Frequency" units="Hz" help="Final frequency of the frequency sweep."/>
-        <value n="Step_frequency" pn="Step frequency" v="0.1e9" unit_magnitude="Frequency" units="Hz" help="Step frequency of the frequency sweep."/>
-      </container>
+      <value n="Frequency" pn="Frequency" v="1.0" help="Problem frequency in Hz. ">
+      </value>
+      <value n="Complex_frequency_mode" pn="Complex frequency mode" v="0" values="0,1" help="- If this option is selected, the problem is solved for one complex frequency \n   s = a + ib, being a = &apos;Real_s&apos; and b = &apos;Imag_s&apos;. \n\n- All the fields are assumed to vary with time as in F(r,t) = Real[ Fc(r)*exp(-st) ]. \n\n- This option overrides &apos;Angular_frequency_mode&apos;, is limited to the &apos;Full_wave&apos; \n   mode, and only allows the use of Dirichlet and quasi-static Robin boundary \n   conditions. \n">
+      </value>
+      <value n="Real_s" pn="Real s" v="0.0" help="Real component of s. ">
+      </value>
+      <value n="Imag_s" pn="Imag s" v="1.0" help="Imaginary component of s. ">
+      </value>
+      <value n="Sweep_frequency_mode" pn="Sweep frequency mode" v="0" values="0,1" help="- If this option is selected, the problem is solved for a set of angular frequencies within the interval [wi, we], \n   with a step size of ws, being wi = 2*pi*fi, we = 2*pi*fe, and ws = 2*pi*fs. The values of fi, fe, and fs are \n   obtained from the input fields: &apos;Initial_frequency&apos;, &apos;Final_frequency&apos;, and &apos;Step_frequency&apos;, respectively. \n\n- &apos;Sweep_frequency_mode&apos; takes precedence over &apos;Angular_frequency_mode&apos; and &apos;Complex_frequency_mode&apos;. \n\n- Visual post-processing results will not be provided, but &apos;.dat&apos; files containing fields, integrals, and scattering \n   parameters will be saved. \n	">
+      </value>
+      <value n="Initial_frequency" pn="Initial frequency" v="1e9" help="Starting frequency of the frequency sweep (Hz).">
+      </value>
+      <value n="Final_frequency" pn="Final frequency" v="3e9" help="Final frequency of the frequency sweep (Hz).">
+      </value>
+      <value n="Step_frequency" pn="Step frequency" v="0.1e9" help="Step size (Hz) between two consecutives frequencies.">
+      </value>
     </container>
-    <container n="Solvers" pn="Solvers">
-      <value n="Solver_type" pn="Solver type" v="Quasi_Minimal_Residual" values="Quasi_Minimal_Residual,Bi_Conjugate_Gradient,Conjugate_Gradient,External_solver" help="Method used in the solution of the linear system.">
-        <dependencies value="External_solver" node="../value[@n!='Solver_type' and @solver_type='External_solver']" att1="state" v1='normal'/>
-        <dependencies value="External_solver" node="../value[@n!='Solver_type' and @solver_type!='External_solver']" att1="state" v1='hidden'/>
-        <dependencies condition="@v!='External_solver'" node="../value[@n!='Solver_type' and @solver_type='External_solver']" att1="state" v1='hidden'/>
-        <dependencies condition="@v!='External_solver'" node="../value[@n!='Solver_type' and @solver_type!='External_solver']" att1="state" v1='normal'/>
+    <container n="Solver" pn="Solver">
+      <value n="Solver" pn="Solver" v="Quasi_Minimal_Residual" values="Quasi_Minimal_Residual,Bi_Conjugate_Gradient,External_solver" help="Solver type used for solving the linear system: \n\n- The &apos;Quasi_Minimal_Residual&apos; and the &apos;Bi_Conjugate_Gradient&apos; are iterative solvers implemented inside \n   ERMES 20.0, whose parameters are specified in &apos;Internal_solvers_settings&apos;. Although these solvers are \n   characterized by low memory consumption, their convergence may be compromised for certain problems. \n   For faster solving times of ill-conditioned matrices, the &apos;External_solver&apos; option is recommended instead. \n\n- If the &apos;External_solver&apos; option is selected, the linear system is saved in binary files within the problem folder. \n   In &apos;Full_wave&apos; and &apos;Electrostatic&apos; modes, the stiffness matrix will be saved in symmetric format (diagonal and \n   upper diagonal). In &apos;Cold_plasma&apos; mode, the stiffness matrix will be saved in the same format as specified \n   in &apos;Cold_plasma&apos; -&gt; &apos;Problem_settings&apos;. \n\n- Once the matrix and vector are saved, the external solver will be called, using the parameters specified in \n  &apos;External_solvers_settings&apos;. Then, following the termination of the external solver, ERMES 20.0 will be called \n   once more to read the obtained solution and produce result files suitable for visualization. If the textboxes \n   in &apos;External_solvers settings&apos; are left blank, ERMES 20.0 will end immediately after saving the linear system. \n   The saved system can then be read and solved at a later time. \n\n- The problemtype folder &apos;\\ERMES_20.0\\External_Solvers&apos; contains examples demonstrating the use of external \n   solvers, including batch files, documentation, and Python scripts for calling and solving linear systems. \n">
+        <dependencies value="External_solver" node="../value[@n='Solver_executable']" att1="state" v1="normal"/>
+        <dependencies value="External_solver" node="../value[@n='Solver_parameters']" att1="state" v1="normal"/>
+        <dependencies condition="@v!='External_solver'" node="../value[@n='Solver_executable']" att1="state" v1="hidden"/>
+        <dependencies condition="@v!='External_solver'" node="../value[@n='Solver_parameters']" att1="state" v1="hidden"/>
       </value>
-      <value n="Processors" pn="Processors" solver_type="standard" v="1" values="1,2,3,4,5,6,7,8,9,10" help="Number of processors used by the iterative solver"/>
-      <value n="Tolerance" pn="Tolerance" solver_type="standard" v="1e-4" values="1e-3,1e-4,1e-5,1e-6,1e-9,1e-12,custom" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
-      <value n="Tol" pn="Custom tolerance" solver_type="standard" v="1e-4" help="Tolerance of the iterative solver. Convergence is reached when ||Ax-b||/||b|| is smaller than the selected tolerance."/>
-      <value n="Preconditioner" pn="Preconditioner" solver_type="standard" v="Diagonal" values="Diagonal,Identity" help="Preconditioning improves convergence of iterative solvers."/>
-      <value n="Max_iterations" pn="Max iterations" solver_type="standard" v="1e-4" values="1e3,1e4,1e5,1e6,custom" help="Maximum number of iterations allowed for the linear solver."/>
-      <value n="Max_It" pn="Custom max iterations" solver_type="standard" v="1e-6" />
-      <value n="Iteration_step" pn="Max iterations" solver_type="standard" v="250" values="50,100,250,500,1000,custom" help="Iteration step showed in the info file."/>
-      <value n="It_Step" pn="Custom iteration step" solver_type="standard" v="250" />
-      <value n="Initial_guess" pn="Initial guess" solver_type="standard" v="Nil_vector" values="Nil_vector,Read_file" help="Read a file with an initial guess for the iterative solver"/>
-      <value n="Results_in_file" pn="Results in file" solver_type="standard" v="Final_step" values="No,Every_step,Final_step" help="Write the vector x in a file."/>
-
-      <value n="Solver_path" pn="Solver path" solver_type="External_solver" v="C:\\MATLAB7\\bin\\win32\\MATLAB.exe" help="Path of the external solver." state="hidden" />
-      <value n="Input_parameters" pn="Input parameters" solver_type="External_solver" v="-nosplash -nodesktop -minimize -r MatLabSolverERMESv7p0" help="Paramaters needed for the external solver." state="hidden"/>
+      <value n="Processors" pn="Processors" v="8" values="1,2,4,6,8,10,12,14,16,32,64" help="Number of OpenMP threads used by the iterative solver.">
+      </value>
+      <value n="Tolerance" pn="Tolerance" v="1e-6" values="1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,1e-7,1e-8,1e-9,1e-10,1e-11,1e-12,custom" help="Convergence is achieved when ||Ax-b||/||b|| falls below the specified tolerance. ">
+        <dependencies value="custom" node="../value[@n='custom_Tol']" att1="state" v1="normal"/>
+        <dependencies condition="@v!='custom'" node="../value[@n='custom_Tol']" att1="state" v1="hidden"/>
+      </value>
+      <value n="custom_Tol" pn="custom Tol" v="0.5e-6" help="Convergence is achieved when ||Ax-b||/||b|| falls below the specified tolerance. " state="hidden">
+      </value>
+      <value n="Preconditioner" pn="Preconditioner" v="Diagonal" values="Diagonal,Identity" help="Internal solver preconditioner.">
+      </value>
+      <value n="Max_iterations" pn="Max iterations" v="1e6" values="1e3,1e4,1e5,1e6,custom" help="Maximum number of iterations permitted.">
+        <dependencies value="custom" node="../value[@n='custom_Max_it']" att1="state" v1="normal"/>
+        <dependencies condition="@v!='custom'" node="../value[@n='custom_Max_it']" att1="state" v1="hidden"/>
+      </value>
+      <value n="custom_Max_it" pn="custom Max it" v="1e6" help="Maximum number of iterations permitted." state="hidden">
+      </value>
+      <value n="Iteration_step" pn="Iteration step" v="250" values="50,100,250,500,1000,custom" help="The residual ||Ax-b||/||b|| will be printed to the &apos;.info&apos; file at the conclusion of \neach &apos;Iteration_step&apos;. If &apos;Results_in_file&apos; -&gt; &apos;Every_step&apos; is selected, the solution \nis saved in the file &apos;Vector_Xo.bin&apos; every &apos;Iteration_step&apos;.  ">
+        <dependencies value="custom" node="../value[@n='custom_It_step']" att1="state" v1="normal"/>
+        <dependencies condition="@v!='custom'" node="../value[@n='custom_It_step']" att1="state" v1="hidden"/>
+      </value>
+      <value n="custom_It_step" pn="custom It step" v="250" help="The residual ||Ax-b||/||b|| will be printed to the &apos;.info&apos; file at the conclusion of \neach &apos;Iteration_step&apos;. If &apos;Results_in_file&apos; -&gt; &apos;Every_step&apos; is selected, the solution \nis saved in the file &apos;Vector_Xo.bin&apos; every &apos;Iteration_step&apos;.  " state="hidden">
+      </value>
+      <value n="Initial_guess" pn="Initial guess" v="Nil_vector" values="Nil_vector,Read_file" help="A solution file is read and used as an initial guess.">
+      </value>
+      <value n="Results_in_file" pn="Results in file" v="Final_step" values="No,Every_step,Final_step" help="Saves the solution at &apos;Every_step&apos; or only at the &apos;Final_step&apos;.">
+      </value>
+      <value n="Solver_executable" pn="Solver executable" v="python" help="External solver executable or script to call it. " state="hidden">
+      </value>
+      <value n="Solver_parameters" pn="Solver parameters" v="./Scripts/Solver.py" help="Input parameters for the external solver. " state="hidden">
+      </value>
     </container>
   </container>
 
-  <!-- procs -->
-  <procs>
+  <container n="Results" pn="Results">
+    <container n="Frequency_domain" pn="Frequency domain">
+      <value n="E" pn="E" v="1" values="0,1" help="Time-harmonic electric field.">
+      </value>
+      <value n="H" pn="H" v="1" values="0,1" help="Time-harmonic magnetic field.">
+      </value>
+      <value n="B" pn="B" v="1" values="0,1" help="Time-harmonic magnetic flux density.">
+      </value>
+      <value n="J" pn="J" v="1" values="0,1" help="Time-harmonic total current density: Jtotal = Jimposed + sigma * E.">
+      </value>
+      <value n="Poynting_vector" pn="Poynting vector" v="0" values="0,1" help="Time averaged Poynting vector: &lt; S &gt; = 0.5 * Real( E x conj( H ) ).">
+      </value>
+      <value n="Joule_heating" pn="Joule heating" v="0" values="0,1" help="Time averaged Joule heating for IHL materials: &lt; Q &gt; = 0.5 * ( sigma + w * Imag( eps ) ) * | E |^2.">
+      </value>
+      <value n="Lorentz_force" pn="Lorentz force" v="0" values="0,1" help="Time averaged Lorentz force: &lt; F &gt; = 0.5 * Real( J x conj( B ) ).">
+      </value>
+    </container>
+    <container n="Time_domain" pn="Time domain">
+      <value n="Initial_time" pn="Initial time" v="Time step" help="Initial time for time domain animations.">
+      </value>
+      <value n="Final_time" pn="Final time" v="T" help="Final time for time domain animations.">
+      </value>
+      <value n="Time_step" pn="Time step" v="T/32" help="Time step for time domain animations.">
+      </value>
+      <value n="E(t)" pn="E(t)" v="0" values="0,1" help="Time-harmonic electric field in time domain.">
+      </value>
+      <value n="H(t)" pn="H(t)" v="0" values="0,1" help="Time-harmonic magnetic field in time domain.">
+      </value>
+      <value n="B(t)" pn="B(t)" v="0" values="0,1" help="Time-harmonic magnetic flux density in time domain.">
+      </value>
+      <value n="J(t)" pn="J(t)" v="0" values="0,1" help="Time-harmonic total current density in time domain.">
+      </value>
+    </container>
+    <container n="Cold_plasma" pn="Cold plasma">
+      <value n="Electron_density" pn="Electron density" v="1" values="0,1" help="Electron density profile. ">
+      </value>
+      <value n="External_B_field" pn="External B field" v="1" values="0,1" help="External B field.">
+      </value>
+      <value n="Permittivity_tensor" pn="Permittivity tensor" v="0" values="0,1" help="Real part of the cold plasma permittivity tensor components (S, P, D, R, and L).">
+      </value>
+      <value n="E_perpendicular" pn="E perpendicular" v="0" values="0,1" help="Projection of the time-harmonic electric field on the direction perpendicular to the applied B field.">
+      </value>
+      <value n="E_parallel" pn="E parallel" v="0" values="0,1" help="Projection of the time-harmonic electric field on the direction parallel to the applied B field.">
+      </value>
+      <value n="E_perpendicular_(t)" pn="E perpendicular (t)" v="0" values="0,1" help="Perpendicular electric field in time domain.">
+      </value>
+      <value n="E_parallel_(t)" pn="E parallel (t)" v="0" values="0,1" help="Parallel electric field in time domain.">
+      </value>
+    </container>
+    <container n="Electrostatic" pn="Electrostatic">
+      <value n="Electrostaic_potential" pn="Electrostaic potential" v="1" values="0,1" help="Electrostatic electric potential in Volts. ">
+      </value>
+      <value n="Electrostatic_E_field" pn="Electrostatic E field" v="1" values="0,1" help="Electrostatic electric field ( E = -grad(V) ).">
+      </value>
+      <value n="Electrostatic_current_density" pn="Electrostatic current density" v="1" values="0,1" help="Electrostatic current density ( J = sigma * E ).">
+      </value>
+      <value n="Electrostatic_Joule_heating" pn="Electrostatic Joule heating" v="1" values="0,1" help="Electrostatic Joule heating ( Q = sigma * | E |^2 ).">
+      </value>
+      <value n="Export_electrostatic_currents" pn="Export electrostatic currents" v="0" values="0,1" help="Writes the electrostatic current density to the file &quot;Jsource-(Export_Id).dat&quot;.">
+      </value>
+      <value n="Export__Id" pn="Export Id" v="1" help="Current source export file Id.">
+      </value>
+      <value n="Export_Ph" pn="Export Ph" v="0" help="The exported current density will be multiplied by exp(i*Export_Ph) when imported.">
+      </value>
+    </container>
+  </container>
 
-  </procs>
+  <container n="Properties" pn="Properties">
+    <container n="materials" pn="Materials" icon="darkorange-block1" help="Materials database">
+      <container n="IHL_materials" pn="IHL materials">
+        <blockdata n='material' name='Vacuum' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="ihl_material" state="hidden">
+          </value>
+          <value n="Electric_conductivity_real" pn="Electric conductivity real" v="0.0" help="Real part of the electric conductivity for isotropic homogeneous linear materials (S/m).">
+          </value>
+          <value n="Electric_conductivity_img" pn="Electric conductivity img" v="0.0" help="Imaginary part of the electric conductivity for isotropic homogeneous linear materials (S/m).">
+          </value>
+          <value n="Electric_permittivity_real" pn="Electric permittivity real" v="1.0" help="Real part of the relative electric permittivity for isotropic homogeneous linear materials.">
+          </value>
+          <value n="Electric_permittivity_img" pn="Electric permittivity img" v="0.0" help="Imaginary part of the relative electric permittivity for isotropic homogeneous linear materials.">
+          </value>
+          <value n="Magnetic_permeability_real" pn="Magnetic permeability real" v="1.0" help="Real part of the relative magnetic permeability for isotropic homogeneous linear materials.">
+          </value>
+          <value n="Magnetic_permeability_img" pn="Magnetic permeability img" v="0.0" help="Imaginary part of the relative magnetic permeability for isotropic homogeneous linear materials.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Dielectric' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="ihl_material" state="hidden">
+          </value>
+          <value n="Electric_conductivity_real" pn="Electric conductivity real" v="0.0" help="Real part of the electric conductivity for isotropic homogeneous linear materials (S/m).">
+          </value>
+          <value n="Electric_conductivity_img" pn="Electric conductivity img" v="0.0" help="Imaginary part of the electric conductivity for isotropic homogeneous linear materials (S/m).">
+          </value>
+          <value n="Electric_permittivity_real" pn="Electric permittivity real" v="1.0" help="Real part of the relative electric permittivity for isotropic homogeneous linear materials.">
+          </value>
+          <value n="Electric_permittivity_img" pn="Electric permittivity img" v="0.0" help="Imaginary part of the relative electric permittivity for isotropic homogeneous linear materials.">
+          </value>
+          <value n="Magnetic_permeability_real" pn="Magnetic permeability real" v="1.0" help="Real part of the relative magnetic permeability for isotropic homogeneous linear materials.">
+          </value>
+          <value n="Magnetic_permeability_img" pn="Magnetic permeability img" v="0.0" help="Imaginary part of the relative magnetic permeability for isotropic homogeneous linear materials.">
+          </value>
+        </blockdata>
+      </container>
+      <container n="Plasma" pn="Plasma">
+        <blockdata n='material' name='Cold_plasma' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <container n="Plasma_geometry" pn="Plasma geometry">
+            <value n="property" pn="property" v="cold_plasma" state="hidden">
+            </value>
+            <value n="Geometry_extrapolation" pn="Geometry extrapolation" v="Flat" values="Flat_1D,Curved,Full_3D,Tensor" help="Plasma geometry extrapolation types:\n \n- &apos;Flat_1D&apos;: a 1D measurement line is read from the files specified in the &apos;ne_file_path&apos; and &apos;Be_file_path&apos; fields. \n    The 1D line is extrapolated into the 3D geometry by extrusion in the toroidal direction and with a curvature \n    in the poloidal direction defined by the &apos;Poloidal_ne_curvature&apos; and &apos;Poloidal_Be_curvature&apos; fields. The first \n    point of the 1D measurement line is placed at the coordinates specified in the &apos;L1_00_XYZ&apos; fields.\n    The values of &apos;ne&apos; and &apos;Be&apos; outside the defined line will correspond to those at the endpoints of the line.\n \n- &apos;Curved&apos;: a 1D measurement line is read from the files specified in the &apos;ne_file_path&apos; and &apos;Be_file_path&apos; fields. \n    The 1D line is extrapolated into the 3D geometry by extrusion, applying a poloidal curvature defined by \n    the &apos;Poloidal_ne_curvature&apos; and &apos;Poloidal_Be_curvature&apos; fields, and a toroidal curvature determined by the \n    distance to the tokamak centre. The tokamak centre coordinates are specified in the &apos;TK_00_XYZ&apos; fields. \n    The first point of the 1D measurement line is placed at the coordinates defined in the &apos;L1_00_XYZ&apos; fields.\n    The values of &apos;ne&apos; and &apos;Be&apos; outside the defined line will correspond to those at the endpoints of the line.\n \n- &apos;Full_3D&apos;: pointwise nodal 3D distributions are read from the files specified in the fields &apos;ne_file_path&apos; and \n    &apos;Be_file_path&apos;. The density and field distributions are applied directly to the 3D geometry node-by-node. \n    The folder &apos;\\Documents\\Plasma_Files&apos; contains practical examples of Python scripts to transform EQDSK \n    equilibrium plasma files into the required format.\n \n- &apos;Tensor&apos;: a permittivity tensor defined in the binary file &apos;Tensor_K_CPGE.bin&apos; is applied to the mesh nodes.\n    This tensor make use of the density and magnetic field 3D data specified in the files &apos;ne_file_path&apos; and \n    &apos;Be_file_path&apos;. The tensor components must be relative to the vacuum permittivity and defined in the Be \n    field coordinate system. The tensor file must be saved in the problem folder. An example of the required \n    file format can be found in the &apos;\\Documents\\Plasma_Files\\Python_Scripts&apos; directory.\n">
+            </value>
+            <value n="Poloidal_ne_curvature" pn="Poloidal ne curvature" v="0.0" help="Poloidal curvature applied to &apos;ne&apos; density profile in the &apos;Flat_1D&apos; and &apos;Curved&apos; modes.\nThe centre of curvature is located at a distance equal to the &apos;Poloidal_ne_curvature&apos; from \nthe first point of the 1D measurement line. The first point of the 1D measurement line \nis located at the coordinates specified in the &apos;L1_00_XYZ&apos; fields.">
+            </value>
+            <value n="Poloidal_Be_curvature" pn="Poloidal Be curvature" v="0.0" help="Poloidal curvature applied to the &apos;Be&apos; field profile in the &apos;Flat_1D&apos; and &apos;Curved&apos; modes.\nThe centre of curvature is located at a distance equal to the &apos;Poloidal_Be_curvature&apos; from \nthe first point of the 1D measurement line. The first point of the 1D measurement line \nis located at the coordinates specified in the &apos;L1_00_XYZ&apos; fields.">
+            </value>
+            <value n="L1_00_X" pn="L1 00 X" v="0.0" help="X coordinate of the first point of the 1D measurement line.">
+            </value>
+            <value n="L1_00_Y" pn="L1 00 Y" v="0.0" help="Y coordinate of the first point of the 1D measurement line.">
+            </value>
+            <value n="L1_00_Z" pn="L1 00 Z" v="0.0" help="Z coordinate of the first point of the 1D measurement line.">
+            </value>
+            <value n="TK_00_X" pn="TK 00 X" v="0.0" help="X coordinate of the centre of the tokamak.">
+            </value>
+            <value n="TK_00_Y" pn="TK 00 Y" v="0.0" help="Y coordinate of the centre of the tokamak.">
+            </value>
+            <value n="TK_00_Z" pn="TK 00 Z" v="0.0" help="Z coordinate of the centre of the tokamak.">
+            </value>
+            <value n="TK_axis_X" pn="TK axis X" v="0.0" help="X component of the main axis of the tokamak.">
+            </value>
+            <value n="TK_axis_Y" pn="TK axis Y" v="0.0" help="Y component of the main axis of the tokamak.">
+            </value>
+            <value n="TK_axis_Z" pn="TK axis Z" v="0.0" help="Z component of the main axis of the tokamak.">
+            </value>
+            <value n="ne_file_path" pn="ne file path" v="..\Electron_Density_Data.dat" help="Electron density data file path.\nCheck examples of file formats in the problemtype folder: &apos;\\Documents\\Plasma_Files&apos;.">
+            </value>
+            <value n="Be_file_path" pn="Be file path" v="..\Bext_Field_Data.dat" help="Applied external static B field data file path.\nCheck examples of file formats in the problemtype folder: &apos;\\Documents\\Plasma_Files&apos;.">
+            </value>
+          </container>
+          <container n="Species_densities" pn="Species densities">
+            <value n="H1_1+_/_ne" pn="H1 1+ / ne" v="0.0" help="Hydrogen 1 (protium) ion q=+1e density relative to electron density (ne).">
+            </value>
+            <value n="H2_1+_/_ne" pn="H2 1+ / ne" v="0.0" help="Hydrogen 2 (deuterium) ion q=+1e density relative to electron density (ne).">
+            </value>
+            <value n="H3_1+_/_ne" pn="H3 1+ / ne" v="0.0" help="Hydrogen 3 (tritium) ion q=+1e density relative to electron density (ne).">
+            </value>
+            <value n="He3_1+_/_ne" pn="He3 1+ / ne" v="0.0" help="Helium 3 ion q=+1e density relative to electron density (ne).">
+            </value>
+            <value n="He3_2+_/_ne" pn="He3 2+ / ne" v="0.0" help="Helium 3 ion q=+2e density relative to electron density (ne).">
+            </value>
+            <value n="He4_1+_/_ne" pn="He4 1+ / ne" v="0.0" help="Helium 4 ion q=+1e density relative to electron density (ne).">
+            </value>
+            <value n="He4_2+_/_ne" pn="He4 2+ / ne" v="0.0" help="Helium 4 ion q=+2e density relative to electron density (ne).">
+            </value>
+            <value n="Be9_1+_/_ne" pn="Be9 1+ / ne" v="0.0" help="Beryllium 9 ion q=+1e density relative to electron density (ne).">
+            </value>
+            <value n="Be9_2+_/_ne" pn="Be9 2+ / ne" v="0.0" help="Beryllium 9 ion q=+2e density relative to electron density (ne).">
+            </value>
+            <value n="Be9_3+_/_ne" pn="Be9 3+ / ne" v="0.0" help="Beryllium 9 ion q=+3e density relative to electron density (ne).">
+            </value>
+            <value n="Be9_4+_/_ne" pn="Be9 4+ / ne" v="0.0" help="Beryllium 9 ion q=+4e density relative to electron density (ne).">
+            </value>
+            <value n="Ne20_10+_/_ne" pn="Ne20 10+ / ne" v="0.0" help="Neon 20 ion q=+10e density relative to electron density (ne).">
+            </value>
+            <value n="Ni60_20+_/_ne" pn="Ni60 20+ / ne" v="0.0" help="Nickel 60 ion q=+20e density relative to electron density (ne).">
+            </value>
+            <value n="W184_25+_/_ne" pn="W184 25+ / ne" v="0.0" help="Tungsten 184 ion q=+25e density relative to electron density (ne).">
+            </value>
+          </container>
+          <container n="Problem_settings" pn="Problem settings">
+            <value n="Matrix_format" pn="Matrix format" v="Full_matrix" values="Full_matrix,Herm-Full,Herm-Symm" help="Available storage formats for the cold plasma system matrix:\n \n- &apos;Full_matrix&apos;: stores a non-symmetric matrix containing: \n    1) the contribution of the volumetric and the Robin boundary condition elements altogether.\n \n- &apos;Herm-Full&apos;: stores two separate matrices containing: \n    1) the diagonal and the upper diagonal of the volumetric elements contribution and, \n    2) a non-symmetric matrix with the contribution of the Robin boundary condition elements.\n \n- &apos;Herm-Symm&apos;: stores two separate matrices containing: \n    1) the diagonal and the upper diagonal of the volumetric elements contribution and, \n    2) the diagonal and the upper diagonal of the Robin boundary condition elements contribution. \n \n">
+            </value>
+            <value n="Kij_tolerance" pn="Kij tolerance" v="Off" values="Off,1e-1,1e-2,1e-3,1e-4,1e-5,1e-6,custom" help="Minimum value of the elements of the matrix.\nIf | Kij | &lt;= Tol then, Kij will not be added to the system matrix. ">
+              <dependencies value="custom" node="../value[@n='custom_Kij_tol']" att1="state" v1="normal"/>
+              <dependencies condition="@v!='custom'" node="../value[@n='custom_Kij_tol']" att1="state" v1="hidden"/>
+            </value>
+            <value n="custom_Kij_tol" pn="custom Kij tol" v="1e-6" help="Custom minimum value of the elements of the matrix.\n If | Kij | &lt;= Tol then, Kij is not added to the system matrix. " state="hidden">
+            </value>
+            <value n="E_par_tolerance" pn="E par tolerance" v="Off" values="Off,1e1,1e2,1e3,1e4,1e5,1e6,custom" help="Tolerance applied to the E field parallel to the magnetic flux density.\nE parallel will be made equal to zero in the nodes where P &lt; 0 and | P | &gt; Tol.\nThis condition will be ignored in the EDG formulations. ">
+              <dependencies value="custom" node="../value[@n='custom_E_par_tol']" att1="state" v1="normal"/>
+              <dependencies condition="@v!='custom'" node="../value[@n='custom_E_par_tol']" att1="state" v1="hidden"/>
+            </value>
+            <value n="custom_E_par_tol" pn="custom E par tol" v="1e6" help="Custom tolerance applied to the E field component parallel to the magnetic flux density.\nE parallel will be made equal to zero in the nodes where P &lt; 0 and | P | &gt; Tol.\nThis condition will be ignored in the EDG formulations." state="hidden">
+            </value>
+            <value n="Damping_mode" pn="Damping mode" v="No_damping" values="No_damping,Background_ctc,Background_den,ComplexFreq_all,ComplexFreq_ele" help="Available damping modes:\n \n- &apos;No_damping&apos;: no damping is applied to the cold plasma tensor.\n \n- &apos;Background_ctc&apos;: a constant damping value is added to the diagonal terms of the cold plasma tensor \n    ( R + i*Damping, L + i*Damping, P + i*Damping, S + i*Damping ) everywhere the cold plasma is defined.\n \n- &apos;Background_den&apos;: as in the &apos;Background_ctc&apos; mode, a constant damping value is added to the diagonal \n    terms of the cold plasma tensor ( R + i*Damping, L + i*Damping, P + i*Damping, S + i*Damping ) but, \n    in this case, the damping value is made zero when the electron density is zero.\n \n- &apos;ComplexFreq_all&apos;: a constant collision frequency is added to the frequency terms of all the species \n    ( w + i*Damping ), as shown in Swanson &quot;Plasma waves&quot; chapter 3.\n \n- &apos;ComplexFreq_ele&apos;: as in the &apos;ComplexFreq_all&apos; mode, a collision frequency is added to the frequency \n    terms ( w + i*Damping ) but, in this case, only in the electrons contribution to the cold plasma tensor. \n \n">
+            </value>
+            <value n="Damping__value" pn="Damping value" v="0.0" help="Damping value. \nIt has a different meaning depending on the damping mode selected.">
+            </value>
+          </container>
+        </blockdata>
+      </container>
+      <container n="RWPort_TE10" pn="RWPort TE10">
+        <blockdata n='material' name='RWPort_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="RWPort_coeffs" state="hidden">
+          </value>
+          <value n="RW_Port_ID" pn="RW Port ID" v="1" values="1,2,3,4,5,6,7,8,9" help="Rectangular waveguide port identification number.">
+          </value>
+          <value n="Mod_RW_Ein" pn="Mod RW Ein" v="1.0" help="Module of a complex scale factor multiplying the input TE10 field:\n-Use &quot;Mod_RW_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Mod_RW_Ein = sqrt( 2*Po )&quot; for an input power equal to Po.">
+          </value>
+          <value n="Phas_RW_Ein" pn="Phas RW Ein" v="0.0" help="Phase of a complex scale factor multiplying the input TE10 field:\n-Use &quot;Phas_RW_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Phas_RW_Ein = Theta&quot; for an input phase equal to Theta (rad).">
+          </value>
+          <value n="RW_00_X" pn="RW 00 X" v="0.0" help="X coordinate of the lower left corner of the port.">
+          </value>
+          <value n="RW_00_Y" pn="RW 00 Y" v="0.0" help="Y coordinate of the lower left corner of the port.">
+          </value>
+          <value n="RW_00_Z" pn="RW 00 Z" v="0.0" help="Z coordinate of the lower left corner of the port.">
+          </value>
+          <value n="Height_X" pn="Height X" v="0.0" help="X coordinate of the upper left corner of the port.">
+          </value>
+          <value n="Height_Y" pn="Height Y" v="0.0" help="Y coordinate of the upper left corner of the port.">
+          </value>
+          <value n="Height_Z" pn="Height Z" v="0.0" help="Z coordinate of the upper left corner of the port.">
+          </value>
+          <value n="Width_X" pn="Width X" v="0.0" help="X coordinate of the lower right corner of the port.">
+          </value>
+          <value n="Width_Y" pn="Width Y" v="0.0" help="Y coordinate of the lower right corner of the port.">
+          </value>
+          <value n="Width_Z" pn="Width Z" v="0.0" help="Z coordinate of the lower right corner of the port.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='RWPort_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="RWPort_coeffs" state="hidden">
+          </value>
+          <value n="RW_Port_ID" pn="RW Port ID" v="2" values="1,2,3,4,5,6,7,8,9" help="Rectangular waveguide port identification number.">
+          </value>
+          <value n="Mod_RW_Ein" pn="Mod RW Ein" v="0.0" help="Module of a complex scale factor multiplying the input TE10 field:\n-Use &quot;Mod_RW_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Mod_RW_Ein = sqrt( 2*Po )&quot; for an input power equal to Po.">
+          </value>
+          <value n="Phas_RW_Ein" pn="Phas RW Ein" v="0.0" help="Phase of a complex scale factor multiplying the input TE10 field:\n-Use &quot;Phas_RW_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Phas_RW_Ein = Theta&quot; for an input phase equal to Theta (rad).">
+          </value>
+          <value n="RW_00_X" pn="RW 00 X" v="0.0" help="X coordinate of the lower left corner of the port.">
+          </value>
+          <value n="RW_00_Y" pn="RW 00 Y" v="0.0" help="Y coordinate of the lower left corner of the port.">
+          </value>
+          <value n="RW_00_Z" pn="RW 00 Z" v="0.0" help="Z coordinate of the lower left corner of the port.">
+          </value>
+          <value n="Height_X" pn="Height X" v="0.0" help="X coordinate of the upper left corner of the port.">
+          </value>
+          <value n="Height_Y" pn="Height Y" v="0.0" help="Y coordinate of the upper left corner of the port.">
+          </value>
+          <value n="Height_Z" pn="Height Z" v="0.0" help="Z coordinate of the upper left corner of the port.">
+          </value>
+          <value n="Width_X" pn="Width X" v="0.0" help="X coordinate of the lower right corner of the port.">
+          </value>
+          <value n="Width_Y" pn="Width Y" v="0.0" help="Y coordinate of the lower right corner of the port.">
+          </value>
+          <value n="Width_Z" pn="Width Z" v="0.0" help="Z coordinate of the lower right corner of the port.">
+          </value>
+        </blockdata>
+      </container>
+      <container n="CoaxialPort_TEM" pn="CoaxialPort TEM">
+        <blockdata n='material' name='CoaxialPort_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="CoaxialPort_coeffs" state="hidden">
+          </value>
+          <value n="CC_Port_ID" pn="CC Port ID" v="1" values="1,2,3,4,5,6,7,8,9" help="Coaxial port identification number.">
+          </value>
+          <value n="Mod_CC_Ein" pn="Mod CC Ein" v="1.0" help="Module of a complex scale factor multiplying the input TEM field:\n-Use &quot;Mod_CC_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Mod_CC_Ein = sqrt( 2*Po )&quot; for an input power equal to Po.">
+          </value>
+          <value n="Phas_CC_Ein" pn="Phas CC Ein" v="0.0" help="Phase of a complex scale factor multiplying the input TEM field:\n-Use &quot;Phas_CC_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Phas_CC_Ein = Theta&quot; for an input phase equal to Theta (rad).">
+          </value>
+          <value n="CC_00_X" pn="CC 00 X" v="0.0" help="X coordinate of the centre of the coaxial waveguide port.">
+          </value>
+          <value n="CC_00_Y" pn="CC 00 Y" v="0.0" help="Y coordinate of the centre of the coaxial waveguide port.">
+          </value>
+          <value n="CC_00_Z" pn="CC 00 Z" v="0.0" help="Z coordinate of the centre of the coaxial waveguide port.">
+          </value>
+          <value n="Inner_D" pn="Inner D" v="0.0" help="Diameter of the inner cylinder of the coaxial waveguide.">
+          </value>
+          <value n="Exter_D" pn="Exter D" v="0.0" help="Diameter of the exterior cylinder of the coaxial waveguide.">
+          </value>
+          <value n="Epr_coax" pn="Epr coax" v="1.0" help="Relative electric permittivity of the medium inside the coaxial waveguide.">
+          </value>
+          <value n="Mu_coax" pn="Mu coax" v="1.0" help="Relative magnetic permeability of the medium inside the coaxial waveguide.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='CoaxialPort_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="CoaxialPort_coeffs" state="hidden">
+          </value>
+          <value n="CC_Port_ID" pn="CC Port ID" v="2" values="1,2,3,4,5,6,7,8,9" help="Coaxial port identification number.">
+          </value>
+          <value n="Mod_CC_Ein" pn="Mod CC Ein" v="0.0" help="Module of a complex scale factor multiplying the input TEM field:\n-Use &quot;Mod_CC_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Mod_CC_Ein = sqrt( 2*Po )&quot; for an input power equal to Po.">
+          </value>
+          <value n="Phas_CC_Ein" pn="Phas CC Ein" v="0.0" help="Phase of a complex scale factor multiplying the input TEM field:\n-Use &quot;Phas_CC_Ein = 0.0&quot; for a purely output port.\n-Use &quot;Phas_CC_Ein = Theta&quot; for an input phase equal to Theta (rad).">
+          </value>
+          <value n="CC_00_X" pn="CC 00 X" v="0.0" help="X coordinate of the centre of the coaxial waveguide port.">
+          </value>
+          <value n="CC_00_Y" pn="CC 00 Y" v="0.0" help="Y coordinate of the centre of the coaxial waveguide port.">
+          </value>
+          <value n="CC_00_Z" pn="CC 00 Z" v="0.0" help="Z coordinate of the centre of the coaxial waveguide port.">
+          </value>
+          <value n="Inner_D" pn="Inner D" v="0.0" help="Diameter of the inner cylinder of the coaxial waveguide.">
+          </value>
+          <value n="Exter_D" pn="Exter D" v="0.0" help="Diameter of the exterior cylinder of the coaxial waveguide.">
+          </value>
+          <value n="Epr_coax" pn="Epr coax" v="1.0" help="Relative electric permittivity of the medium inside the coaxial waveguide.">
+          </value>
+          <value n="Mu_coax" pn="Mu coax" v="1.0" help="Relative magnetic permeability of the medium inside the coaxial waveguide.">
+          </value>
+        </blockdata>
+      </container>
+      <container n="Robin_condition_coefficients" pn="Robin condition coefficients">
+        <blockdata n='material' name='Robin_coefficients_Plane_waves' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Robin_coeffs_Plane_waves" state="hidden">
+          </value>
+          <value n="Multiple_waves" pn="Multiple waves" v="Off" values="On,Off" help="Enables the application of multiple plane waves on a boundary.\nAll the plane waves with &quot;Multiple_waves = On&quot; will be added \ncoherently to the same boundary, using the material properties \ndefined for the first plane wave.">
+          </value>
+          <value n="Module_E_field" pn="Module E field" v="0.0" help="Module of the electric field.">
+          </value>
+          <value n="Phase_E_field" pn="Phase E field" v="0.0" help="Phase of the electric field.">
+          </value>
+          <value n="Polarization_X" pn="Polarization X" v="0.0" help="X component of the polarization vector.">
+          </value>
+          <value n="Polarization_Y" pn="Polarization Y" v="0.0" help="Y component of the polarization vector.">
+          </value>
+          <value n="Polarization_Z" pn="Polarization Z" v="0.0" help="Z component of the polarization vector.">
+          </value>
+          <value n="Wave_vector_X" pn="Wave vector X" v="0.0" help="X component of the wave vector.">
+          </value>
+          <value n="Wave_vector_Y" pn="Wave vector Y" v="0.0" help="Y component of the wave vector.">
+          </value>
+          <value n="Wave_vector_Z" pn="Wave vector Z" v="0.0" help="Z component of the wave vector.">
+          </value>
+          <value n="IBC_conductivity_real" pn="IBC conductivity real" v="0.0" help="Real part of the electric conductivity (S/m) for the impedance boundary condition.">
+          </value>
+          <value n="IBC_conductivity_img" pn="IBC conductivity img" v="0.0" help="Imaginary part of the electric conductivity (S/m) for the impedance boundary condition.">
+          </value>
+          <value n="IBC_permittivity_real" pn="IBC permittivity real" v="1.0" help="Real part of the relative electric permittivity for the impedance boundary condition.">
+          </value>
+          <value n="IBC_permittivity_img" pn="IBC permittivity img" v="0.0" help="Imaginary part of the relative electric permittivity for the impedance boundary condition.">
+          </value>
+          <value n="IBC_permeability_real" pn="IBC permeability real" v="1.0" help="Real part of the relative magnetic permeability for the impedance boundary condition.">
+          </value>
+          <value n="IBC_permeability_img" pn="IBC permeability img" v="0.0" help="Imaginary part of the relative magnetic permeability for the impedance boundary condition.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Robin_coefficients_Gauss_beam' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Robin_coeffs_Gauss_beam" state="hidden">
+          </value>
+          <value n="GB_module_E_par" pn="GB module E par" v="0.0" help="Module of the electric field parallel to the polarization vector at the waist centre.">
+          </value>
+          <value n="GB_phase_E_par" pn="GB phase E par" v="0.0" help="Phase of the electric field parallel to the polarization vector at the waist centre.">
+          </value>
+          <value n="GB_module_E_per" pn="GB module E per" v="0.0" help="Module of the electric field perpendicular to the polarization and wave vectors at the waist centre.">
+          </value>
+          <value n="GB_phase_E_per" pn="GB phase E per" v="0.0" help="Phase of the electric field perpendicular to the polarization and wave vectors at the waist centre.">
+          </value>
+          <value n="GB_radius_par" pn="GB radius par" v="0.0" help="Gaussian beam waist radius in the direction parallel to the polarization vector. ">
+          </value>
+          <value n="GB_radius_per" pn="GB radius per" v="0.0" help="Gaussian beam waist radius in the direction perpendicular to the polarization and wave vectors.">
+          </value>
+          <value n="GB_00_X" pn="GB 00 X" v="0.0" help="X coordinate of the centre of the Gaussian beam waist.">
+          </value>
+          <value n="GB_00_Y" pn="GB 00 Y" v="0.0" help="Y coordinate of the centre of the Gaussian beam waist.">
+          </value>
+          <value n="GB_00_Z" pn="GB 00 Z" v="0.0" help="Z coordinate of the centre of the Gaussian beam waist.">
+          </value>
+          <value n="GB_polarization_X" pn="GB polarization X" v="0.0" help="X component of the polarization vector.">
+          </value>
+          <value n="GB_polarization_Y" pn="GB polarization Y" v="0.0" help="Y component of the polarization vector.">
+          </value>
+          <value n="GB_polarization_Z" pn="GB polarization Z" v="0.0" help="Z component of the polarization vector.">
+          </value>
+          <value n="GB_wave_vector_X" pn="GB wave vector X" v="0.0" help="X component of the wave vector.">
+          </value>
+          <value n="GB_wave_vector_Y" pn="GB wave vector Y" v="0.0" help="Y component of the wave vector.">
+          </value>
+          <value n="GB_wave_vector_Z" pn="GB wave vector Z" v="0.0" help="Z component of the wave vector.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Robin_coefficients_Quasiestatic' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Robin_coeffs_Quasiestatic" state="hidden">
+          </value>
+          <value n="Robin_coeff_real" pn="Robin coeff real" v="0.0" help="Real part of the Robin boundary condition coefficient.">
+          </value>
+          <value n="Robin_coeff_img" pn="Robin coeff img" v="0.0" help="Imaginary part of the Robin boundary condition coefficient.">
+          </value>
+          <value n="Module_Flux" pn="Module Flux" v="0.0" help="Module of the injected current density.\nOnly defined for A-phi potentials formulations.">
+          </value>
+          <value n="Phase_Flux" pn="Phase Flux" v="0.0" help="Phase of the injected current density.\nOnly defined for A-phi potentials formulations.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Robin_coefficients_Electrostatic' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Robin_coeffs_Electrostatic" state="hidden">
+          </value>
+          <value n="Robin_coeff" pn="Robin coeff" v="0.0" help="Robin boundary condition coefficient.\nOnly defined for the &apos;Electrostatic&apos; mode.">
+          </value>
+          <value n="Flux" pn="Flux" v="0.0" help="Robin boundary condition flux.\nOnly defined for the &apos;Electrostatic&apos; mode.">
+          </value>
+        </blockdata>
+      </container>
+      <container n="Plasma_far_field_propeties" pn="Plasma far field propeties">
+        <blockdata n='material' name='FW' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Plasma_wave_type">
+          </value>
+          <value n="Plasma_Wave_Type_ID" pn="Plasma Wave Type ID" v="1.0" help="Cold plasma wave type at the boundary FW ( n2 = RL/S ).">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='RW' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Plasma_wave_type">
+          </value>
+          <value n="Plasma_Wave_Type_ID" pn="Plasma Wave Type ID" v="2.0" help="Cold plasma wave type at the boundary RW ( n2 = R ).">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='LW' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Plasma_wave_type">
+          </value>
+          <value n="Plasma_Wave_Type_ID" pn="Plasma Wave Type ID" v="3.0" help="Cold plasma wave type at the boundary LW ( n2 = L ).">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='PW' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="Plasma_wave_type">
+          </value>
+          <value n="Plasma_Wave_Type_ID" pn="Plasma Wave Type ID" v="4.0" help="Cold plasma wave type at the boundary PW ( n2 = P ).">
+          </value>
+        </blockdata>
+      </container>
+      <container n="Current_sources_properties" pn="Current sources properties">
+        <blockdata n='material' name='J_cartesian' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="FDJcartesian" state="hidden">
+          </value>
+          <value n="Jx" pn="Jx" v="0.0" help="Modulus of the X component of the electric current density vector (A/m^2).">
+          </value>
+          <value n="Phx" pn="Phx" v="0.0" help="Phase of the X component of the electric current density vector (rad).">
+          </value>
+          <value n="Jy" pn="Jy" v="0.0" help="Modulus of the Y component of the electric current density vector (A/m^2).">
+          </value>
+          <value n="Phy" pn="Phy" v="0.0" help="Phase of the Y component of the electric current density vector (rad).">
+          </value>
+          <value n="Jz" pn="Jz" v="0.0" help="Modulus of the Z component of the electric current density vector (A/m^2).">
+          </value>
+          <value n="Phz" pn="Phz" v="0.0" help="Phase of the Z component of the electric current density vector (rad).">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='J_axisymm' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="FDJaxisymm" state="hidden">
+          </value>
+          <value n="Ja" pn="Ja" v="0.0" help="Modulus of the angular component of the axisymmetric electric current density vector (A/m^2).\nThe current density is axisymmetric with respect to the axis AX_axis_XYZ with centre of curvature on AX_00_XYZ.">
+          </value>
+          <value n="Pha" pn="Pha" v="0.0" help="Phase of the angular component of the axisymmetric electric current density vector (rad).\nThe current density is axisymmetric with respect to the axis AX_axis_XYZ with centre of curvature on AX_00_XYZ.">
+          </value>
+          <value n="AX_00_X" pn="AX 00 X" v="0.0" help="X coordinate of the centre of curvature. ">
+          </value>
+          <value n="AX_00_Y" pn="AX 00 Y" v="0.0" help="Y coordinate of the centre of curvature. ">
+          </value>
+          <value n="AX_00_Z" pn="AX 00 Z" v="0.0" help="Z coordinate of the centre of curvature.  ">
+          </value>
+          <value n="AX_axis_X" pn="AX axis X" v="0.0" help="X component of the axisymmetric axis.">
+          </value>
+          <value n="AX_axis_Y" pn="AX axis Y" v="0.0" help="Y component of the axisymmetric axis.">
+          </value>
+          <value n="AX_axis_Z" pn="AX axis Z" v="0.0" help="Z component of the axisymmetric axis.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='J_combine' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <container n="Cartesian" pn="Cartesian">
+            <value n="property" pn="property" v="FDJcombine" state="hidden">
+            </value>
+            <value n="Jx" pn="Jx" v="0.0" help="Modulus of the X component of the electric current density vector (A/m^2).">
+            </value>
+            <value n="Phx" pn="Phx" v="0.0" help="Phase of the X component of the electric current density vector (rad).">
+            </value>
+            <value n="Jy" pn="Jy" v="0.0" help="Modulus of the Y component of the electric current density vector (A/m^2).">
+            </value>
+            <value n="Phy" pn="Phy" v="0.0" help="Phase of the Y component of the electric current density vector (rad).">
+            </value>
+            <value n="Jz" pn="Jz" v="0.0" help="Modulus of the Z component of the electric current density vector (A/m^2).">
+            </value>
+            <value n="Phz" pn="Phz" v="0.0" help="Phase of the Z component of the electric current density vector (rad).">
+            </value>
+          </container>
+          <container n="Axisymmetric" pn="Axisymmetric">
+            <value n="Ja" pn="Ja" v="0.0" help="Modulus of the angular component of the axisymmetric electric current density vector (A/m^2).\nThe current density is axisymmetric with respect to the axis AX_axis_XYZ with centre of curvature on AX_00_XYZ.">
+            </value>
+            <value n="Pha" pn="Pha" v="0.0" help="Phase of the angular component of the axisymmetric electric current density vector (rad).\nThe current density is axisymmetric with respect to the axis AX_axis_XYZ with centre of curvature on AX_00_XYZ.">
+            </value>
+            <value n="AX_00_X" pn="AX 00 X" v="0.0" help="X coordinate of the centre of curvature. ">
+            </value>
+            <value n="AX_00_Y" pn="AX 00 Y" v="0.0" help="Y coordinate of the centre of curvature. ">
+            </value>
+            <value n="AX_00_Z" pn="AX 00 Z" v="0.0" help="Z coordinate of the centre of curvature. ">
+            </value>
+            <value n="AX_axis_X" pn="AX axis X" v="0.0" help="X component of the axisymmetric axis.">
+            </value>
+            <value n="AX_axis_Y" pn="AX axis Y" v="0.0" help="Y component of the axisymmetric axis.">
+            </value>
+            <value n="AX_axis_Z" pn="AX axis Z" v="0.0" help="Z component of the axisymmetric axis.">
+            </value>
+          </container>
+        </blockdata>
+        <blockdata n='material' name='J_helicoidal' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="FDJhelicoidal" state="hidden">
+          </value>
+          <value n="Jpol" pn="Jpol" v="0.0" help="Module of the poloidal component of the helicoidal current density (A/m^2).">
+          </value>
+          <value n="Php" pn="Php" v="0.0" help="Phase of the poloidal component of the helicoidal current density (rad).">
+          </value>
+          <value n="Jtor" pn="Jtor" v="0.0" help="Module of the toroidal component of the helicoidal current density (A/m^2).">
+          </value>
+          <value n="Pht" pn="Pht" v="0.0" help="Phase of the toroidal component of the helicoidal current density (rad).">
+          </value>
+          <value n="HL_R" pn="HL R" v="0.0" help="Major radius of the torus in where the helicoidal current is applied.\nMust be greater than zero.">
+          </value>
+          <value n="HL_00_X" pn="HL 00 X" v="0.0" help="X coordinate of the torus centre.">
+          </value>
+          <value n="HL_00_Y" pn="HL 00 Y" v="0.0" help="Y coordinate of the torus centre.">
+          </value>
+          <value n="HL_00_Z" pn="HL 00 Z" v="0.0" help="Z coordinate of the torus centre.">
+          </value>
+          <value n="HL_axis_X" pn="HL axis X" v="0.0" help="X component of the torus axis.">
+          </value>
+          <value n="HL_axis_Y" pn="HL axis Y" v="0.0" help="Y component of the torus axis.">
+          </value>
+          <value n="HL_axis_Z" pn="HL axis Z" v="0.0" help="Z component of the torus axis.">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='J_plasmam' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="FDJplasmam" state="hidden">
+          </value>
+          <value n="Jpol" pn="Jpol" v="0.0" help="Module of the complex constant applied to the poloidal current density component (A/m^2).">
+          </value>
+          <value n="Php" pn="Php" v="0.0" help="Phase of the complex constant applied to the poloidal current density component (rad).">
+          </value>
+          <value n="Jtor" pn="Jtor" v="0.0" help="Module of the complex constant applied to the toroidal current density component (A/m^2).">
+          </value>
+          <value n="Pht" pn="Pht" v="0.0" help="Phase of the complex constant applied to the toroidal current density component (rad).">
+          </value>
+          <value n="PM_M" pn="PM M" v="0" help="Plasma mode index ( M ):\n- Jpol = |Jpol| * exp( i*Php ) * sin( M * Theta + Phi ).\n- Jtor  = |Jtor| * exp( i*Pht  ) * { - M * [ ( R / r ) + cos( Theta ) ] * sin( M * Theta + Phi ) - sin( Theta ) * cos( M * Theta + Phi ) }.">
+          </value>
+          <value n="PM_R" pn="PM R" v="0.0" help="Major radius of the torus in where the plasma mode is applied.\nMust be greater than cero.">
+          </value>
+          <value n="PM_00_X" pn="PM 00 X" v="0.0" help="X coordinate of the torus centre.">
+          </value>
+          <value n="PM_00_Y" pn="PM 00 Y" v="0.0" help="Y coordinate of the torus centre.">
+          </value>
+          <value n="PM_00_Z" pn="PM 00 Z" v="0.0" help="Z coordinate of the torus centre.">
+          </value>
+          <value n="PM_axis_X" pn="PM axis X" v="0.0" help="X component of the torus axis.">
+          </value>
+          <value n="PM_axis_Y" pn="PM axis Y" v="0.0" help="Y component of the torus axis.">
+          </value>
+          <value n="PM_axis_Z" pn="PM axis Z" v="0.0" help="Z component of the torus axis.">
+          </value>
+        </blockdata>
+      </container>
+      <container n="Volume_to_integer_propeties" pn="Volume to integer propeties">
+        <blockdata n='material' name='Volume_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="1.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="2.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_3' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="3.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_4' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="4.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_5' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="5.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_6' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="6.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_7' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="7.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_8' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="8.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Volume_9' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="VolumeToInt">
+          </value>
+          <value n="Volume_ID" pn="Volume ID" v="9.0">
+          </value>
+        </blockdata>
+      </container>
+      <container n="Surface_to_integer_propeties" pn="Surface to integer propeties">
+        <blockdata n='material' name='Surface_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="1.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="2.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_3' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="3.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_4' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="4.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_5' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="5.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_6' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="6.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_7' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="7.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_8' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="8.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Surface_9' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="SurfaceToInt">
+          </value>
+          <value n="Surface_ID" pn="Surface ID" v="9.0">
+          </value>
+        </blockdata>
+      </container>
+      <container n="PBC_surfaces" pn="PBC surfaces">
+        <blockdata n='material' name='Front' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="PBCSurface">
+          </value>
+          <value n="PBCSurface_ID" pn="PBCSurface ID" v="11">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Back' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="PBCSurface">
+          </value>
+          <value n="PBCSurface_ID" pn="PBCSurface ID" v="12">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Right' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="PBCSurface">
+          </value>
+          <value n="PBCSurface_ID" pn="PBCSurface ID" v="21">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='Left' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="PBCSurface">
+          </value>
+          <value n="PBCSurface_ID" pn="PBCSurface ID" v="22">
+          </value>
+        </blockdata>
+      </container>
+      <container n="Imported_Robin_surfaces" pn="Imported Robin surfaces">
+        <blockdata n='material' name='IRBCS_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="1.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="2.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_3' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="3.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_4' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="4.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_5' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="5.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_6' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="6.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_7' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="7.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_8' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="8.0">
+          </value>
+        </blockdata>
+        <blockdata n='material' name='IRBCS_9' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
+          <value n="property" pn="property" v="IRBCSurface">
+          </value>
+          <value n="IRBCS_ID" pn="IRBCS ID" v="9.0">
+          </value>
+        </blockdata>
+      </container>
+    </container>
+  </container>
+
+  <container n="Conditions" pn="Conditions">
+    <container n="Dirichlet_conditions" pn="Dirichlet conditions">
+      <condition n="Point_Voltage_Full_wave" pn="Point Voltage Full wave" ov="point" ovm="node" icon="drag" help="Time-harmonic voltage module over points.">
+        <value n="Module_Voltage" pn="Module Voltage" v="0.0" help="Time-harmonic voltage module over points.">
+        </value>
+        <value n="Phase_Voltage" pn="Phase Voltage" v="0.0" help="Time-harmonic voltage phase over points.">
+        </value>
+      </condition>
+      <condition n="Point_Voltage_Electrostatic" pn="Point Voltage Electrostatic" ov="point" ovm="node" icon="drag" help="Electrostatic voltage over points.">
+        <value n="Voltage" pn="Voltage" v="0.0" help="Electrostatic voltage over points.">
+        </value>
+      </condition>
+      <condition n="Point_Singularity" pn="Point Singularity" ov="point" ovm="node" icon="drag" help="Number of ungaged layers around a point:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+        <value n="Ungaged_layers" pn="Ungaged layers" v="1" values="1,2,3,4,5,6" help="Number of ungaged layers around a point:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+        </value>
+      </condition>
+      <condition n="Line_Voltage_Full_wave" pn="Line Voltage Full wave" ov="line" ovm="node" icon="drag" help="Time-harmonic voltage module over lines.">
+        <value n="Module_Voltage" pn="Module Voltage" v="0.0" help="Time-harmonic voltage module over lines.">
+        </value>
+        <value n="Phase_Voltage" pn="Phase Voltage" v="0.0" help="Time-harmonic voltage phase over lines.">
+        </value>
+      </condition>
+      <condition n="Line_Voltage_Electrostatic" pn="Line Voltage Electrostatic" ov="line" ovm="node" icon="drag" help="Electrostatic voltage over lines.">
+        <value n="Voltage" pn="Voltage" v="0.0" help="Electrostatic voltage over lines.">
+        </value>
+      </condition>
+      <condition n="Line_Singularity" pn="Line Singularity" ov="line" ovm="node" icon="drag" help="Number of ungaged layers around a line:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+        <value n="Ungaged_layers" pn="Ungaged layers" v="1" values="1,2,3,4,5,6" help="Number of ungaged layers around a line:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+        </value>
+      </condition>
+      <condition n="Perfect_Electric_Conductor_(PEC)" pn="Perfect Electric Conductor (PEC)" ov="surface" ovm="element" icon="drag" help="- For E-field formulations, it imposes n x E = 0 on the surface.\n- For A-V potential formulations, it sets n x A = 0 and V = 0 on the surface.\n- For edge-stabilized formulations, it additionally sets the Lagrange multiplier\n   equal to zero on the surface.">
+        <value n="n_x_E_=" pn="n x E =" v="0.0" values="0.0" help="- For E-field formulations, it imposes n x E = 0 on the surface.\n- For A-V potential formulations, it sets n x A = 0 and V = 0 on the surface.\n- For edge-stabilized formulations, it additionally sets the Lagrange multiplier\n   equal to zero on the surface.">
+        </value>
+      </condition>
+      <condition n="Perfect_Magnetic_Conductor_(PMC)" pn="Perfect Magnetic Conductor (PMC)" ov="surface" ovm="element" icon="drag" help="- For regularized and LL2P E-field formulations, it imposes n . E = 0 on the surface.\n- For regularized and LL2P A-V potential formulations, it sets n . A = 0 on the surface.\n- It is redundant for double-curl edge formulations.\n- This condition is specifically designed for symmetry surfaces.">
+        <value n="n_._E_=" pn="n . E =" v="0.0" values="0.0" help="- For regularized and LL2P E-field formulations, it imposes n . E = 0 on the surface.\n- For regularized and LL2P A-V potential formulations, it sets n . A = 0 on the surface.\n- It is redundant for double-curl edge formulations.\n- This condition is specifically designed for symmetry surfaces.">
+        </value>
+      </condition>
+      <condition n="Transversal_Electric_Condition_(TEC)" pn="Transversal Electric Condition (TEC)" ov="surface" ovm="element" icon="drag" help="- For regularized and LL2P E-field formulations, it imposes n . E = 0 on the surface.\n- For regularized and LL2P A-V potential formulations, it sets n . A = 0 on the surface.\n- It is redundant for double-curl edge formulations.\n- This condition is specifically designed for waveguide port surfaces.">
+        <value n="n_._E_=" pn="n . E =" v="0.0" values="0.0" help="- For regularized and LL2P E-field formulations, it imposes n . E = 0 on the surface.\n- For regularized and LL2P A-V potential formulations, it sets n . A = 0 on the surface.\n- It is redundant for double-curl edge formulations.\n- This condition is specifically designed for waveguide port surfaces.">
+        </value>
+      </condition>
+      <condition n="Periodic_Boundary_Condition_(PBC)" pn="Periodic Boundary Condition (PBC)" ov="surface" ovm="element" icon="drag" help="It enforces equal fields (with a phase difference) on two \nseparate surfaces:\n\n- &quot;Front-Back&quot; surfaces must lie parallel to the XY-plane.\n\n- For cyclic periodic symmetry, &quot;Left&quot; surface must be \n   positioned in the 00-YZ plane and the axis of rotation \n   must align with the Z-axis.\n\n- Set the symmetry type and phase difference between \n   surfaces in &quot;Solving parameters&quot; -&gt; &quot;Geometry&quot;.\n\n- If PBCs are required only between parallel surfaces with  \n   no phase difference, separate contact volume elements  \n   can be used as an equivalent alternative.\n ">
+        <value n="Face" pn="Face" v="Front" values="Front,Back,Right,Left" help="It enforces equal fields (with a phase difference) on two \nseparate surfaces:\n\n- &quot;Front-Back&quot; surfaces must lie parallel to the XY-plane.\n\n- For cyclic periodic symmetry, &quot;Left&quot; surface must be \n   positioned in the 00-YZ plane and the axis of rotation \n   must align with the Z-axis.\n\n- Set the symmetry type and phase difference between \n   surfaces in &quot;Solving parameters&quot; -&gt; &quot;Geometry&quot;.\n\n- If PBCs are required only between parallel surfaces with  \n   no phase difference, separate contact volume elements  \n   can be used as an equivalent alternative.\n ">
+        </value>
+      </condition>
+      <condition n="Surface_Voltage_Full_wave" pn="Surface Voltage Full wave" ov="surface" ovm="node" icon="drag" help="Time-harmonic voltage module over surfaces.">
+        <value n="Module_Voltage" pn="Module Voltage" v="0.0" help="Time-harmonic voltage module over surfaces.">
+        </value>
+        <value n="Phase_Voltage" pn="Phase Voltage" v="0.0" help="Time-harmonic voltage phase over surfaces.">
+        </value>
+      </condition>
+      <condition n="Surface_Voltage_Electrostatic" pn="Surface Voltage Electrostatic" ov="surface" ovm="node" icon="drag" help="Electrostatic voltage over surfaces.">
+        <value n="Voltage" pn="Voltage" v="0.0" help="Electrostatic voltage over surfaces.">
+        </value>
+      </condition>
+      <condition n="Surface_Singularity" pn="Surface Singularity" ov="surface" ovm="node" icon="drag" help="Number of ungaged layers around a surface:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+        <value n="Ungaged_layers" pn="Ungaged layers" v="1" values="1,2,3,4,5,6" help="Number of ungaged layers around a surface:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+        </value>
+      </condition>
+    </container>
+    <container n="Robin_conditions" pn="Robin conditions">
+      <condition n="Far_field_condition_Full_wave" pn="Far field condition Full wave" ov="surface" ovm="element" icon="drag" help="Far field boundary condition (1st order ABC).">
+        <value n="Far_field" pn="Far field" v="1st_ABC" values="1st_ABC" help="Far field boundary condition (1st order ABC).">
+        </value>
+      </condition>
+      <condition n="Far_field_condition_Cold_plasma" pn="Far field condition Cold plasma" ov="surface" ovm="element" icon="drag" help="Cold plasma wave type at the boundary:\n- FW : n2 = RL/S.\n- RW : n2 = R.\n- LW : n2 = L.\n- PW : n2 = P.">
+        <value n="Plasma_wave_type" pn="Plasma wave type" v="FW" values="FW,RW,LW,PW" help="Cold plasma wave type at the boundary:\n- FW : n2 = RL/S.\n- RW : n2 = R.\n- LW : n2 = L.\n- PW : n2 = P.">
+        </value>
+      </condition>
+      <condition n="Robin_condition_Full_wave" pn="Robin condition Full wave" ov="surface" ovm="element" icon="drag" help="Full wave Robin boundary condition.">
+        <value n="Robin_coefficients" pn="Robin coefficients" v="Robin_coeffs_Full_wave" values="Robin_coeffs_Full_wave,Robin_coefficients_Plane_waves,Robin_coefficients_Gauss_beam,Robin_coefficients_Quasiestatic,Robin_coefficients_Electrostatic" help="Full wave Robin boundary condition.">
+        </value>
+      </condition>
+      <condition n="Robin_condition_Imported" pn="Robin condition Imported" ov="surface" ovm="element" icon="drag" help="Robin boundary condition imported from files.">
+        <value n="Imported_Robin_surface" pn="Imported Robin surface" v="IRBCS_1" values="IRBCS_1,IRBCS_2,IRBCS_3,IRBCS_4,IRBCS_5,IRBCS_6,IRBCS_7,IRBCS_8,IRBCS_9" help="Robin boundary condition imported from files.">
+        </value>
+      </condition>
+      <condition n="Robin_condition_Electrostatic" pn="Robin condition Electrostatic" ov="surface" ovm="element" icon="drag" help="Far-field boundary conditions for electrostatic problems and current flux input.">
+        <value n="Robin_coefficients" pn="Robin coefficients" v="Robin_coeffs_Electrostatic" values="Robin_coeffs_Electrostatic,Robin_coefficients_Plane_waves,Robin_coefficients_Gauss_beam,Robin_coefficients_Quasiestatic,Robin_coefficients_Electrostatic" help="Far-field boundary conditions for electrostatic problems and current flux input.">
+        </value>
+      </condition>
+      <condition n="Coaxial_TEM_condition" pn="Coaxial TEM condition" ov="surface" ovm="element" icon="drag" help="Coaxial waveguide port condition (TEM mode).">
+        <value n="Coaxial_Port" pn="Coaxial Port" v="CoaxialPort_1" values="CoaxialPort_1,CoaxialPort_2" help="Coaxial waveguide port condition (TEM mode).">
+        </value>
+      </condition>
+      <condition n="RW_port_TE10_condition" pn="RW port TE10 condition" ov="surface" ovm="element" icon="drag" help="Rectangular waveguide port condition (TE10 mode).">
+        <value n="RW_Port" pn="RW Port" v="RWPort_1" values="RWPort_1,RWPort_2" help="Rectangular waveguide port condition (TE10 mode).">
+        </value>
+      </condition>
+    </container>
+    <container n="Field_integrals" pn="Field integrals">
+      <condition n="Field_surface_integral" pn="Field surface integral" ov="surface" ovm="element" icon="drag" help="Surface over which the fields are integrated.">
+        <value n="Surface_to_integer" pn="Surface to integer" v="Surface_1" values="Surface_1,Surface_2,Surface_3,Surface_4,Surface_5,Surface_6,Surface_7,Surface_8,Surface_9" help="Surface over which the fields are integrated.">
+        </value>
+      </condition>
+      <condition n="Projection_RWTE10" pn="Projection RWTE10" ov="surface" ovm="element" icon="drag" help="Rectangular waveguide port over which the scattering parameters Sij are calculated. ">
+        <value n="RWPort" pn="RWPort" v="RWPort_1" values="RWPort_1,RWPort_2" help="Rectangular waveguide port over which the scattering parameters Sij are calculated. ">
+        </value>
+      </condition>
+      <condition n="Projection_CoaxialTEM" pn="Projection CoaxialTEM" ov="surface" ovm="element" icon="drag" help="Coaxial waveguide port over which the scattering parameters Sij are calculated.">
+        <value n="CoaxialPort" pn="CoaxialPort" v="CoaxialPort_1" values="CoaxialPort_1,CoaxialPort_2" help="Coaxial waveguide port over which the scattering parameters Sij are calculated.">
+        </value>
+      </condition>
+      <condition n="Field_volume_integral" pn="Field volume integral" ov="volume" ovm="element" icon="drag" help="Volume over which the fields are integrated.">
+        <value n="Volume_to_integer" pn="Volume to integer" v="Volume_1" values="Volume_1,Volume_2,Volume_3,Volume_4,Volume_5,Volume_6,Volume_7,Volume_8,Volume_9" help="Volume over which the fields are integrated.">
+        </value>
+      </condition>
+    </container>
+    <container n="Current_sources" pn="Current sources">
+      <condition n="FD_current_density" pn="FD current density" ov="volume" ovm="element" icon="drag" help="Value of the current density over a volume.">
+        <value n="Source" pn="Source" v="J_source" values="J_source,J_cartesian,J_axisymm,J_combine,J_helicoidal,J_plasmam" help="Value of the current density over a volume.">
+        </value>
+      </condition>
+    </container>
+  </container>
 </ermes_data>
