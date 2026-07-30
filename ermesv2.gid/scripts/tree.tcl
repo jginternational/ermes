@@ -34,16 +34,17 @@ proc ::Ermes::GetMaterialList {} {
     return [join $result ,]
 }
 
-# proc Cmas2d::GetMaterialsList { domNode } {
-#     set x_path {//container[@n="materials"]}
-#     set dom_materials [$domNode selectNodes $x_path]
-#     if { $dom_materials == "" } {
-#         error [= "xpath '%s' not found in the spd file" $x_path]
-#     }
-#     set result [list]
-#     foreach dom_material [$dom_materials childNodes] {
-#         set name [$dom_material @name]
-#         lappend result $name
-#     }
-#     return [join $result ,]
-# }
+
+proc ::Ermes::GetValueForName { name {baseXPath ""} } {
+    if { $baseXPath == "" } {
+        set root [customlib::GetBaseRoot] 
+    } else {
+        set root [[customlib::GetBaseRoot] selectNodes $baseXPath]
+    }
+    set dom_node [[customlib::GetBaseRoot] selectNodes "//value\[@n='$name'\]"]
+    if { $dom_node == "" } {
+        error [= "xpath '%s' not found in the spd file" $name]
+    }
+    set value [get_domnode_attribute $dom_node v]
+    return $value
+}
