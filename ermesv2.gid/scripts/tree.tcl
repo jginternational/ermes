@@ -18,3 +18,32 @@ proc ::Ermes::TreeOpenBranch { branchName } {
     
     gid_groups_conds::actualize_conditions_window
 }
+
+proc ::Ermes::GetMaterialList {} {
+    set x_path {//container[@n="Properties"]/container[@n="materials"]}
+    set x_path {//blockdata[@n="material"]}
+    set dom_materials [[customlib::GetBaseRoot] selectNodes $x_path]
+    if { $dom_materials == "" } {
+        error [= "xpath '%s' not found in the spd file" $x_path]
+    }
+    set result [list]
+    foreach dom_material $dom_materials {
+        set name [$dom_material @name]
+        lappend result $name
+    }
+    return [join $result ,]
+}
+
+# proc Cmas2d::GetMaterialsList { domNode } {
+#     set x_path {//container[@n="materials"]}
+#     set dom_materials [$domNode selectNodes $x_path]
+#     if { $dom_materials == "" } {
+#         error [= "xpath '%s' not found in the spd file" $x_path]
+#     }
+#     set result [list]
+#     foreach dom_material [$dom_materials childNodes] {
+#         set name [$dom_material @name]
+#         lappend result $name
+#     }
+#     return [join $result ,]
+# }

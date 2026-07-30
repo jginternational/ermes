@@ -137,76 +137,9 @@
     </container>
   </container>
 
-  <container n="Results" pn="Results">
-    <container n="Frequency_domain" pn="Frequency domain">
-      <value n="E" pn="E" v="1" values="0,1" help="Time-harmonic electric field.">
-      </value>
-      <value n="H" pn="H" v="1" values="0,1" help="Time-harmonic magnetic field.">
-      </value>
-      <value n="B" pn="B" v="1" values="0,1" help="Time-harmonic magnetic flux density.">
-      </value>
-      <value n="J" pn="J" v="1" values="0,1" help="Time-harmonic total current density: Jtotal = Jimposed + sigma * E.">
-      </value>
-      <value n="Poynting_vector" pn="Poynting vector" v="0" values="0,1" help="Time averaged Poynting vector: &lt; S &gt; = 0.5 * Real( E x conj( H ) ).">
-      </value>
-      <value n="Joule_heating" pn="Joule heating" v="0" values="0,1" help="Time averaged Joule heating for IHL materials: &lt; Q &gt; = 0.5 * ( sigma + w * Imag( eps ) ) * | E |^2.">
-      </value>
-      <value n="Lorentz_force" pn="Lorentz force" v="0" values="0,1" help="Time averaged Lorentz force: &lt; F &gt; = 0.5 * Real( J x conj( B ) ).">
-      </value>
-    </container>
-    <container n="Time_domain" pn="Time domain">
-      <value n="Initial_time" pn="Initial time" v="Time step" help="Initial time for time domain animations.">
-      </value>
-      <value n="Final_time" pn="Final time" v="T" help="Final time for time domain animations.">
-      </value>
-      <value n="Time_step" pn="Time step" v="T/32" help="Time step for time domain animations.">
-      </value>
-      <value n="E(t)" pn="E(t)" v="0" values="0,1" help="Time-harmonic electric field in time domain.">
-      </value>
-      <value n="H(t)" pn="H(t)" v="0" values="0,1" help="Time-harmonic magnetic field in time domain.">
-      </value>
-      <value n="B(t)" pn="B(t)" v="0" values="0,1" help="Time-harmonic magnetic flux density in time domain.">
-      </value>
-      <value n="J(t)" pn="J(t)" v="0" values="0,1" help="Time-harmonic total current density in time domain.">
-      </value>
-    </container>
-    <container n="Cold_plasma" pn="Cold plasma">
-      <value n="Electron_density" pn="Electron density" v="1" values="0,1" help="Electron density profile. ">
-      </value>
-      <value n="External_B_field" pn="External B field" v="1" values="0,1" help="External B field.">
-      </value>
-      <value n="Permittivity_tensor" pn="Permittivity tensor" v="0" values="0,1" help="Real part of the cold plasma permittivity tensor components (S, P, D, R, and L).">
-      </value>
-      <value n="E_perpendicular" pn="E perpendicular" v="0" values="0,1" help="Projection of the time-harmonic electric field on the direction perpendicular to the applied B field.">
-      </value>
-      <value n="E_parallel" pn="E parallel" v="0" values="0,1" help="Projection of the time-harmonic electric field on the direction parallel to the applied B field.">
-      </value>
-      <value n="E_perpendicular_(t)" pn="E perpendicular (t)" v="0" values="0,1" help="Perpendicular electric field in time domain.">
-      </value>
-      <value n="E_parallel_(t)" pn="E parallel (t)" v="0" values="0,1" help="Parallel electric field in time domain.">
-      </value>
-    </container>
-    <container n="Electrostatic" pn="Electrostatic">
-      <value n="Electrostaic_potential" pn="Electrostaic potential" v="1" values="0,1" help="Electrostatic electric potential in Volts. ">
-      </value>
-      <value n="Electrostatic_E_field" pn="Electrostatic E field" v="1" values="0,1" help="Electrostatic electric field ( E = -grad(V) ).">
-      </value>
-      <value n="Electrostatic_current_density" pn="Electrostatic current density" v="1" values="0,1" help="Electrostatic current density ( J = sigma * E ).">
-      </value>
-      <value n="Electrostatic_Joule_heating" pn="Electrostatic Joule heating" v="1" values="0,1" help="Electrostatic Joule heating ( Q = sigma * | E |^2 ).">
-      </value>
-      <value n="Export_electrostatic_currents" pn="Export electrostatic currents" v="0" values="0,1" help="Writes the electrostatic current density to the file &quot;Jsource-(Export_Id).dat&quot;.">
-      </value>
-      <value n="Export__Id" pn="Export Id" v="1" help="Current source export file Id.">
-      </value>
-      <value n="Export_Ph" pn="Export Ph" v="0" help="The exported current density will be multiplied by exp(i*Export_Ph) when imported.">
-      </value>
-    </container>
-  </container>
-
   <container n="Properties" pn="Properties">
     <container n="materials" pn="Materials" icon="darkorange-block1" help="Materials database">
-      <container n="IHL_materials" pn="IHL materials">
+      <container n="IHL_materials" pn="IHL materials" help="Isotropic homogeneous linear materials database">
         <blockdata n='material' name='Vacuum' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="property" pn="property" v="ihl_material" state="hidden">
           </value>
@@ -240,7 +173,7 @@
           </value>
         </blockdata>
       </container>
-      <container n="Plasma" pn="Plasma">
+      <container n="Plasma" pn="Plasma" help="Plasma materials database">
         <blockdata n='material' name='Cold_plasma' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <container n="Plasma_geometry" pn="Plasma geometry">
             <value n="property" pn="property" v="cold_plasma" state="hidden">
@@ -326,7 +259,7 @@
           </container>
         </blockdata>
       </container>
-      <container n="RWPort_TE10" pn="RWPort TE10">
+      <container n="RWPort_TE10" pn="RWPort TE10" help="Rectangular waveguide port definition">
         <blockdata n='material' name='RWPort_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="property" pn="property" v="RWPort_coeffs" state="hidden">
           </value>
@@ -384,7 +317,7 @@
           </value>
         </blockdata>
       </container>
-      <container n="CoaxialPort_TEM" pn="CoaxialPort TEM">
+      <container n="CoaxialPort_TEM" pn="CoaxialPort TEM" help="Coaxial waveguide port definition">
         <blockdata n='material' name='CoaxialPort_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="property" pn="property" v="CoaxialPort_coeffs" state="hidden">
           </value>
@@ -524,7 +457,7 @@
           </value>
         </blockdata>
       </container>
-      <container n="Plasma_far_field_propeties" pn="Plasma far field propeties">
+      <container n="Plasma_far_field_propeties" pn="Plasma far field propeties" help="Plasma far field properties">
         <blockdata n='material' name='FW' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="property" pn="property" v="Plasma_wave_type">
           </value>
@@ -550,7 +483,7 @@
           </value>
         </blockdata>
       </container>
-      <container n="Current_sources_properties" pn="Current sources properties">
+      <container n="Current_sources_properties" pn="Current sources properties" help="Current sources properties">
         <blockdata n='material' name='J_cartesian' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="property" pn="property" v="FDJcartesian" state="hidden">
           </value>
@@ -678,201 +611,28 @@
           </value>
         </blockdata>
       </container>
-      <container n="Volume_to_integer_propeties" pn="Volume to integer propeties">
-        <blockdata n='material' name='Volume_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
+      <container n="Volume_to_integer_propeties" pn="Volume to integer propeties" help="Volume to integer propeties">
+        <blockdata n='material' name='Volume_to_integer_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="Volume_ID" pn="Volume ID" v="1.0">
           </value>
         </blockdata>
-        <blockdata n='material' name='Volume_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="2.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Volume_3' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="3.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Volume_4' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="4.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Volume_5' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="5.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Volume_6' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="6.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Volume_7' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="7.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Volume_8' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="8.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Volume_9' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="VolumeToInt">
-          </value>
-          <value n="Volume_ID" pn="Volume ID" v="9.0">
-          </value>
-        </blockdata>
       </container>
-      <container n="Surface_to_integer_propeties" pn="Surface to integer propeties">
-        <blockdata n='material' name='Surface_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
+      <container n="Surface_to_integer_propeties" pn="Surface to integer propeties" help="Surface to integer propeties">
+        <blockdata n='material' name='Surface_to_integer_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="Surface_ID" pn="Surface ID" v="1.0">
           </value>
         </blockdata>
-        <blockdata n='material' name='Surface_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="2.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Surface_3' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="3.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Surface_4' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="4.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Surface_5' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="5.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Surface_6' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="6.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Surface_7' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="7.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Surface_8' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="8.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Surface_9' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="SurfaceToInt">
-          </value>
-          <value n="Surface_ID" pn="Surface ID" v="9.0">
-          </value>
-        </blockdata>
       </container>
-      <container n="PBC_surfaces" pn="PBC surfaces">
-        <blockdata n='material' name='Front' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="PBCSurface">
-          </value>
-          <value n="PBCSurface_ID" pn="PBCSurface ID" v="11">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Back' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="PBCSurface">
-          </value>
-          <value n="PBCSurface_ID" pn="PBCSurface ID" v="12">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Right' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="PBCSurface">
-          </value>
-          <value n="PBCSurface_ID" pn="PBCSurface ID" v="21">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='Left' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="PBCSurface">
-          </value>
-          <value n="PBCSurface_ID" pn="PBCSurface ID" v="22">
-          </value>
-        </blockdata>
-      </container>
-      <container n="Imported_Robin_surfaces" pn="Imported Robin surfaces">
-        <blockdata n='material' name='IRBCS_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
+      <container n="Imported_Robin_surfaces" pn="Imported Robin surfaces" help="Imported Robin surfaces">
+        <blockdata n='material' name='IRBCS_to_integer_1' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
           <value n="IRBCS_ID" pn="IRBCS ID" v="1.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_2' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="2.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_3' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="3.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_4' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="4.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_5' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="5.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_6' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="6.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_7' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="7.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_8' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="8.0">
-          </value>
-        </blockdata>
-        <blockdata n='material' name='IRBCS_9' sequence='1' editable_name='unique' icon='material16' help='Material definition' morebutton='0'>
-          <value n="property" pn="property" v="IRBCSurface">
-          </value>
-          <value n="IRBCS_ID" pn="IRBCS ID" v="9.0">
           </value>
         </blockdata>
       </container>
     </container>
+    <condition n="bodies" pn="Bodies" ov="volume" ovm="element" icon="darkorange-group" help="Assign materials to volumes.">
+      <value n="material" pn="Material" v="" values="[::Ermes::GetMaterialList]" help="Select material from list"/>
+    </condition>
   </container>
 
   <container n="Conditions" pn="Conditions">
@@ -991,4 +751,72 @@
       </condition>
     </container>
   </container>
+
+  <container n="Results" pn="Results">
+    <container n="Frequency_domain" pn="Frequency domain">
+      <value n="E" pn="E" v="1" values="0,1" help="Time-harmonic electric field.">
+      </value>
+      <value n="H" pn="H" v="1" values="0,1" help="Time-harmonic magnetic field.">
+      </value>
+      <value n="B" pn="B" v="1" values="0,1" help="Time-harmonic magnetic flux density.">
+      </value>
+      <value n="J" pn="J" v="1" values="0,1" help="Time-harmonic total current density: Jtotal = Jimposed + sigma * E.">
+      </value>
+      <value n="Poynting_vector" pn="Poynting vector" v="0" values="0,1" help="Time averaged Poynting vector: &lt; S &gt; = 0.5 * Real( E x conj( H ) ).">
+      </value>
+      <value n="Joule_heating" pn="Joule heating" v="0" values="0,1" help="Time averaged Joule heating for IHL materials: &lt; Q &gt; = 0.5 * ( sigma + w * Imag( eps ) ) * | E |^2.">
+      </value>
+      <value n="Lorentz_force" pn="Lorentz force" v="0" values="0,1" help="Time averaged Lorentz force: &lt; F &gt; = 0.5 * Real( J x conj( B ) ).">
+      </value>
+    </container>
+    <container n="Time_domain" pn="Time domain">
+      <value n="Initial_time" pn="Initial time" v="Time step" help="Initial time for time domain animations.">
+      </value>
+      <value n="Final_time" pn="Final time" v="T" help="Final time for time domain animations.">
+      </value>
+      <value n="Time_step" pn="Time step" v="T/32" help="Time step for time domain animations.">
+      </value>
+      <value n="E(t)" pn="E(t)" v="0" values="0,1" help="Time-harmonic electric field in time domain.">
+      </value>
+      <value n="H(t)" pn="H(t)" v="0" values="0,1" help="Time-harmonic magnetic field in time domain.">
+      </value>
+      <value n="B(t)" pn="B(t)" v="0" values="0,1" help="Time-harmonic magnetic flux density in time domain.">
+      </value>
+      <value n="J(t)" pn="J(t)" v="0" values="0,1" help="Time-harmonic total current density in time domain.">
+      </value>
+    </container>
+    <container n="Cold_plasma" pn="Cold plasma">
+      <value n="Electron_density" pn="Electron density" v="1" values="0,1" help="Electron density profile. ">
+      </value>
+      <value n="External_B_field" pn="External B field" v="1" values="0,1" help="External B field.">
+      </value>
+      <value n="Permittivity_tensor" pn="Permittivity tensor" v="0" values="0,1" help="Real part of the cold plasma permittivity tensor components (S, P, D, R, and L).">
+      </value>
+      <value n="E_perpendicular" pn="E perpendicular" v="0" values="0,1" help="Projection of the time-harmonic electric field on the direction perpendicular to the applied B field.">
+      </value>
+      <value n="E_parallel" pn="E parallel" v="0" values="0,1" help="Projection of the time-harmonic electric field on the direction parallel to the applied B field.">
+      </value>
+      <value n="E_perpendicular_(t)" pn="E perpendicular (t)" v="0" values="0,1" help="Perpendicular electric field in time domain.">
+      </value>
+      <value n="E_parallel_(t)" pn="E parallel (t)" v="0" values="0,1" help="Parallel electric field in time domain.">
+      </value>
+    </container>
+    <container n="Electrostatic" pn="Electrostatic">
+      <value n="Electrostaic_potential" pn="Electrostaic potential" v="1" values="0,1" help="Electrostatic electric potential in Volts. ">
+      </value>
+      <value n="Electrostatic_E_field" pn="Electrostatic E field" v="1" values="0,1" help="Electrostatic electric field ( E = -grad(V) ).">
+      </value>
+      <value n="Electrostatic_current_density" pn="Electrostatic current density" v="1" values="0,1" help="Electrostatic current density ( J = sigma * E ).">
+      </value>
+      <value n="Electrostatic_Joule_heating" pn="Electrostatic Joule heating" v="1" values="0,1" help="Electrostatic Joule heating ( Q = sigma * | E |^2 ).">
+      </value>
+      <value n="Export_electrostatic_currents" pn="Export electrostatic currents" v="0" values="0,1" help="Writes the electrostatic current density to the file &quot;Jsource-(Export_Id).dat&quot;.">
+      </value>
+      <value n="Export__Id" pn="Export Id" v="1" help="Current source export file Id.">
+      </value>
+      <value n="Export_Ph" pn="Export Ph" v="0" help="The exported current density will be multiplied by exp(i*Export_Ph) when imported.">
+      </value>
+    </container>
+  </container>
+
 </ermes_data>

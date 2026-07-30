@@ -64,9 +64,6 @@ proc ::Ermes::CreateToolbar { {type "DEFAULT INSIDELEFT"} } {
     AddNewToolbar "ERMES bar" PreErmesWindowGeom ::Ermes::CreateToolbar
 }
 
-proc ::Ermes::DestoyToolbar {} {
-    global kratosPriv    
-    ReleaseToolbar "ERMES bar"
-    rename ErmesCreateToolbar ""    
-    catch { destroy $kratosPriv(toolbarwin) }
+proc ::Ermes::DestoyToolbar {} {   
+    ReleaseToolbar "ERMES bar"  
 }

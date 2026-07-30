@@ -20,7 +20,7 @@ proc GiD_Event_AfterWriteCalculationFile { filename errorflag } {
         WarnWin [= "Error: data not OK"]
         return
     }    
-    set err [catch { Ermes::WriteCalculationFile $filename } ret]
+    set err [catch { ::Ermes::WriteCalculationFiles $filename } ret]
     if { $err } {       
         WarnWin [= "Error when preparing data for analysis (%s)" $::errorInfo]
         set ret -cancel-
@@ -73,11 +73,10 @@ proc ::Ermes::ModifyMenus { } {
 proc ::Ermes::LoadScripts { dir } {
     source $dir/scripts/toolbar.tcl
     source $dir/scripts/tree.tcl
+    source $dir/scripts/write/write.tcl
+    source $dir/scripts/write/write_generaldata.tcl
+    source $dir/scripts/write/write_nodaldata.tcl
+    source $dir/scripts/write/validate.tcl
 }
 
-###################################################################################
-#      print data in the .dat calculation file (instead of a classic .bas template)
-proc ::Ermes::WriteCalculationFile { filename } {
-    customlib::InitWriteFile $filename
-    customlib::EndWriteFile ;#finish writting
-}
+
