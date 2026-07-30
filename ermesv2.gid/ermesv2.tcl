@@ -74,8 +74,8 @@ proc ::Ermes::LoadScripts { dir } {
     source $dir/scripts/toolbar.tcl
     source $dir/scripts/tree.tcl
     source $dir/scripts/write/write.tcl
-    source $dir/scripts/write/write_generaldata.tcl
-    source $dir/scripts/write/write_nodaldata.tcl
+    source $dir/scripts/write/00_write_generaldata.tcl
+    source $dir/scripts/write/01_write_nodaldata.tcl
     source $dir/scripts/write/validate.tcl
 }
 
