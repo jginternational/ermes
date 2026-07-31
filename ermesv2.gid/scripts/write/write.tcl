@@ -19,4 +19,7 @@ proc ::Ermes::WriteCalculationFiles { filename } {
     # Write Voltages applied on nodes
     ::Ermes::WriteNodalVoltages $filename
 
+    # Write singular nodes
+    ::Ermes::WriteNodalSingular $filename
+
 }

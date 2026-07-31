@@ -7,7 +7,7 @@ proc ::Ermes::WriteNodalVoltages { filename } {
     set problem_mode [::Ermes::GetValueForName Problem_mode]
     if { $problem_mode == "Electrostatic" } {
         set condition_list [list "Voltage_Electrostatic"]
-        set condition_formats [list {"No[%d]" "node" "id"} {".V.FixC([%e]);" "property" "Voltage"}]
+        set condition_formats [list {"No[%d]" "node" "id"} {".V.Fix(%e);" "property" "Voltage"}]
         customlib::WriteNodes $condition_list $condition_formats
         customlib::EndWriteFile
     } elseif { $problem_mode == "Full_wave" } {
