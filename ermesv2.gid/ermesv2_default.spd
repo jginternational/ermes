@@ -22,6 +22,8 @@
     <container n="General" pn="General">
       <value n="Problem_mode" pn="Problem mode" v="Full_wave" values="Full_wave,Electrostatic,Cold_plasma" help="Available problem modes:\n- &apos;Full_wave&apos;: for solving problems in frequency domain with IHL materials.\n- &apos;Electrostatic&apos;: for solving electrostatic problems.\n- &apos;Cold_plasma&apos;: for solving time-harmonic problems with a cold plasma.">
       <!-- TODO: symmetry is only for Full_wave mode -->
+      <!-- TODO: nodal voltages Full_wave only in Full_wave mode -->
+      <!-- TODO: nodal voltages electrostatic only in electrostatic mode -->
       </value>
       <value n="Symmetry" pn="Symmetry" v="3D" values="3D,XY,ZZ,AY" help="Symmetry conditions applied to the main field across the entire problem \ndomain. The main field can be either E or A, depending on the selected \nFEM formulation. Available options are:\n\n- &apos;3D&apos;: for solving a general three-dimensional problem.\n\n- &apos;XY&apos;: for solving only the X- and Y-components of the main field, while \n   setting the Z-component to zero throughout the entire domain. This \n   symmetry is only available in &quot;Full_wave&quot; mode and is not supported \n   for edge element formulations.\n\n- &apos;ZZ&apos;: for solving only the Z-component of the main field, while setting \n   the X- and Y-component to zero throughout the entire domain. The \n   main field is set to zero on all PEC surfaces. This symmetry is only available \n   in &quot;Full_wave&quot; mode and is not supported for edge element formulations.\n\n- &apos;AY&apos;: for solving an axisymmetric problem around the Y axis, with the \n   angular and radial components of the main field set to zero throughout \n   the entire domain. The main field is set to zero on all PEC surfaces. This \n   symmetry is only available in &quot;Full_wave&quot; mode and is not supported \n   for edge element formulations.\n">
       </value>
@@ -638,32 +640,18 @@
 
   <container n="Conditions" pn="Conditions">
     <container n="Dirichlet_conditions" pn="Dirichlet conditions">
-      <condition n="Point_Voltage_Full_wave" pn="Point Voltage Full wave" ov="point" ovm="node" icon="drag" help="Time-harmonic voltage module over points.">
-        <value n="Module_Voltage" pn="Module Voltage" v="0.0" help="Time-harmonic voltage module over points.">
+      <condition n="Voltage_Full_wave" pn="Voltage Full wave" ov="point,line,surface" ovm="node" icon="drag" help="Time-harmonic voltage module over nodes.">
+        <value n="Module_Voltage" pn="Module Voltage" v="0.0" help="Time-harmonic voltage module over nodes.">
         </value>
-        <value n="Phase_Voltage" pn="Phase Voltage" v="0.0" help="Time-harmonic voltage phase over points.">
-        </value>
-      </condition>
-      <condition n="Point_Voltage_Electrostatic" pn="Point Voltage Electrostatic" ov="point" ovm="node" icon="drag" help="Electrostatic voltage over points.">
-        <value n="Voltage" pn="Voltage" v="0.0" help="Electrostatic voltage over points.">
+        <value n="Phase_Voltage" pn="Phase Voltage" v="0.0" help="Time-harmonic voltage phase over nodes.">
         </value>
       </condition>
-      <condition n="Point_Singularity" pn="Point Singularity" ov="point" ovm="node" icon="drag" help="Number of ungaged layers around a point:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
-        <value n="Ungaged_layers" pn="Ungaged layers" v="1" values="1,2,3,4,5,6" help="Number of ungaged layers around a point:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+      <condition n="Voltage_Electrostatic" pn="Voltage Electrostatic" ov="point,line,surface" ovm="node" icon="drag" help="Electrostatic voltage over nodes.">
+        <value n="Voltage" pn="Voltage" v="0.0" help="Electrostatic voltage over nodes.">
         </value>
       </condition>
-      <condition n="Line_Voltage_Full_wave" pn="Line Voltage Full wave" ov="line" ovm="node" icon="drag" help="Time-harmonic voltage module over lines.">
-        <value n="Module_Voltage" pn="Module Voltage" v="0.0" help="Time-harmonic voltage module over lines.">
-        </value>
-        <value n="Phase_Voltage" pn="Phase Voltage" v="0.0" help="Time-harmonic voltage phase over lines.">
-        </value>
-      </condition>
-      <condition n="Line_Voltage_Electrostatic" pn="Line Voltage Electrostatic" ov="line" ovm="node" icon="drag" help="Electrostatic voltage over lines.">
-        <value n="Voltage" pn="Voltage" v="0.0" help="Electrostatic voltage over lines.">
-        </value>
-      </condition>
-      <condition n="Line_Singularity" pn="Line Singularity" ov="line" ovm="node" icon="drag" help="Number of ungaged layers around a line:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
-        <value n="Ungaged_layers" pn="Ungaged layers" v="1" values="1,2,3,4,5,6" help="Number of ungaged layers around a line:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+      <condition n="Singularity" pn="Singularity" ov="point,line,surface" ovm="node" icon="drag" help="Number of ungaged layers around a point,line or surface:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
+        <value n="Ungaged_layers" pn="Ungaged layers" v="1" values="1,2,3,4,5,6" help="Number of ungaged layers around a point,line or surface:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
         </value>
       </condition>
       <condition n="Perfect_Electric_Conductor_(PEC)" pn="Perfect Electric Conductor (PEC)" ov="surface" ovm="element" icon="drag" help="- For E-field formulations, it imposes n x E = 0 on the surface.\n- For A-V potential formulations, it sets n x A = 0 and V = 0 on the surface.\n- For edge-stabilized formulations, it additionally sets the Lagrange multiplier\n   equal to zero on the surface.">
@@ -680,20 +668,6 @@
       </condition>
       <condition n="Periodic_Boundary_Condition_(PBC)" pn="Periodic Boundary Condition (PBC)" ov="surface" ovm="element" icon="drag" help="It enforces equal fields (with a phase difference) on two \nseparate surfaces:\n\n- &quot;Front-Back&quot; surfaces must lie parallel to the XY-plane.\n\n- For cyclic periodic symmetry, &quot;Left&quot; surface must be \n   positioned in the 00-YZ plane and the axis of rotation \n   must align with the Z-axis.\n\n- Set the symmetry type and phase difference between \n   surfaces in &quot;Solving parameters&quot; -&gt; &quot;Geometry&quot;.\n\n- If PBCs are required only between parallel surfaces with  \n   no phase difference, separate contact volume elements  \n   can be used as an equivalent alternative.\n ">
         <value n="Face" pn="Face" v="Front" values="Front,Back,Right,Left" help="It enforces equal fields (with a phase difference) on two \nseparate surfaces:\n\n- &quot;Front-Back&quot; surfaces must lie parallel to the XY-plane.\n\n- For cyclic periodic symmetry, &quot;Left&quot; surface must be \n   positioned in the 00-YZ plane and the axis of rotation \n   must align with the Z-axis.\n\n- Set the symmetry type and phase difference between \n   surfaces in &quot;Solving parameters&quot; -&gt; &quot;Geometry&quot;.\n\n- If PBCs are required only between parallel surfaces with  \n   no phase difference, separate contact volume elements  \n   can be used as an equivalent alternative.\n ">
-        </value>
-      </condition>
-      <condition n="Surface_Voltage_Full_wave" pn="Surface Voltage Full wave" ov="surface" ovm="node" icon="drag" help="Time-harmonic voltage module over surfaces.">
-        <value n="Module_Voltage" pn="Module Voltage" v="0.0" help="Time-harmonic voltage module over surfaces.">
-        </value>
-        <value n="Phase_Voltage" pn="Phase Voltage" v="0.0" help="Time-harmonic voltage phase over surfaces.">
-        </value>
-      </condition>
-      <condition n="Surface_Voltage_Electrostatic" pn="Surface Voltage Electrostatic" ov="surface" ovm="node" icon="drag" help="Electrostatic voltage over surfaces.">
-        <value n="Voltage" pn="Voltage" v="0.0" help="Electrostatic voltage over surfaces.">
-        </value>
-      </condition>
-      <condition n="Surface_Singularity" pn="Surface Singularity" ov="surface" ovm="node" icon="drag" help="Number of ungaged layers around a surface:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
-        <value n="Ungaged_layers" pn="Ungaged layers" v="1" values="1,2,3,4,5,6" help="Number of ungaged layers around a surface:\n- In the regularized formulations, the divergence term of the elements\n   inside the ungauged layers is removed.\n- In the LL2P formulations, both the divergence term and the bubble\n   contribution of the elements inside the ungauged layers are removed.">
         </value>
       </condition>
     </container>

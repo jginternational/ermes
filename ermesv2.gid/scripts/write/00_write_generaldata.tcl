@@ -5,7 +5,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
 
     customlib::WriteString "// Problem settings"
 
-#######################  Problem settings  ###################################
+ #######################  Problem settings  ###################################
     set problem_mode [::Ermes::GetValueForName Problem_mode]
     switch -- $problem_mode {
         Full_wave {
@@ -23,7 +23,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         Electrostatic { ::Ermes::WriteGeneralVariable Problem_mode Electrostatic }
     }
 
-#######################  GiD geometric tolerance  ############################
+ #######################  GiD geometric tolerance  ############################
     set geo_error_tolerance [::Ermes::GetValueForName Geo_error_tol]
     switch -- $geo_error_tolerance {
         0.0 { set geo_error_tolerance_value GeoTol_0 }
@@ -42,14 +42,14 @@ proc ::Ermes::WriteGeneralInformation { filename } {
     }
     ::Ermes::WriteGeneralVariable Geo_error_tol $geo_error_tolerance_value
 
-##################  Periodic boundary condition type  ########################
+ ##################  Periodic boundary condition type  ########################
     set pbc_symmetry [::Ermes::GetValueForName PBC_symmetry]
     switch -- $pbc_symmetry {
         Cyclic { ::Ermes::WriteGeneralVariable PBC_symmetry PBC_Cyclic }
         Periodic { ::Ermes::WriteGeneralVariable PBC_symmetry PBC_Periodic }
     }
 
-##########################  Solution mode  ###################################
+ ##########################  Solution mode  ###################################
     set sweep_frequency_mode [::Ermes::GetValueForName Sweep_frequency_mode]
     set solving_mode [::Ermes::GetValueForName Solving_mode]
     if { $sweep_frequency_mode == "1" || $solving_mode == "Release" } {
@@ -60,25 +60,25 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         ::Ermes::WriteGeneralVariable ProblemType Read_Mode
     }
 
-######################  Element type and order  ##############################
+ ######################  Element type and order  ##############################
     set element_type [::Ermes::GetValueForName Element_type]
     ::Ermes::WriteGeneralVariable Element_type $element_type
 
-####################  E-fields or AV-potentials  #############################
+ ####################  E-fields or AV-potentials  #############################
     set potentials [::Ermes::GetValueForName Potentials]
     switch -- $potentials {
         On { ::Ermes::WriteGeneralVariable Potentials Potentials_On }
         Off { ::Ermes::WriteGeneralVariable Potentials Potentials_Off }
     }
 
-################  AV continuity on contact surfaces  ##########################
+ ################  AV continuity on contact surfaces  ##########################
     set av_continuity [::Ermes::GetValueForName AV_continuity]
     switch -- $av_continuity {
         On { ::Ermes::WriteGeneralVariable AV_continuity AV_Continuity_On }
         Off { ::Ermes::WriteGeneralVariable AV_continuity AV_Continuity_Off }
     }
 
-####################  Visualization points  ##################################
+ ####################  Visualization points  ##################################
     set results_mode [::Ermes::GetValueForName Results_mode]
     switch -- $results_mode {
         Nodes { ::Ermes::WriteGeneralVariable Results_mode Results_On_Nodes }
@@ -86,7 +86,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         GP_4 { ::Ermes::WriteGeneralVariable Results_mode Results_On_4GP }
     }
 
-#################  LL2P smoothing on results  ################################
+ #################  LL2P smoothing on results  ################################
     set ll2p_smooth [::Ermes::GetValueForName LL2P_smooth]
     if { $ll2p_smooth == "On" } {
         ::Ermes::WriteGeneralVariable LL2P_smooth LL2P_Smoothing_On
@@ -94,28 +94,28 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         ::Ermes::WriteGeneralVariable LL2P_smooth LL2P_Smoothing_Off
     }
 
-################  Type of surface normal averaging  ##########################
+ ################  Type of surface normal averaging  ##########################
     set normals_type [::Ermes::GetValueForName Normals_type]
     switch -- $normals_type {
         Geometric_average { ::Ermes::WriteGeneralVariable Normals_type Geometric_Average_Normals }
         Area_weighted { ::Ermes::WriteGeneralVariable Normals_type Area_Weighted_Normals }
     }
 
-#######################  RME stabilization  #################################
+ #######################  RME stabilization  #################################
     set rme_stabilize [::Ermes::GetValueForName RME_stabilize]
     switch -- $rme_stabilize {
         On { ::Ermes::WriteGeneralVariable RME_stabilize RMED_Stab_On }
         Off { ::Ermes::WriteGeneralVariable RME_stabilize RMED_Stab_Off }
     }
 
-#######################  EDG stabilization  ##################################
+ #######################  EDG stabilization  ##################################
     set edg_stabilize [::Ermes::GetValueForName EDG_stabilize]
     switch -- $edg_stabilize {
         On { ::Ermes::WriteGeneralVariable EDG_stabilize EDGE_Stab_On }
         Off { ::Ermes::WriteGeneralVariable EDG_stabilize EDGE_Stab_Off }
     }
 
-#######################  LL2P stabilization  #################################
+ #######################  LL2P stabilization  #################################
     set ll2p_stabilize [::Ermes::GetValueForName LL2P_stabilize]
     switch -- $ll2p_stabilize {
         On { ::Ermes::WriteGeneralVariable LL2P_stabilize LL2P_Stab_On }
@@ -129,7 +129,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         Nil_vector { ::Ermes::WriteGeneralVariable Initial_guess Read_Guess_Off }
     }
 
-##################  Write solution vector on file  ###########################
+ ##################  Write solution vector on file  ###########################
     set results_in_file [::Ermes::GetValueForName Results_in_file]
     switch -- $results_in_file {
         No { ::Ermes::WriteGeneralVariable Results_in_file Write_Solution_Off }
@@ -137,7 +137,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         Final_step { ::Ermes::WriteGeneralVariable Results_in_file Write_Solution_Final }
     }
 
-###################  Import Robin flux from files  ###########################
+ ###################  Import Robin flux from files  ###########################
     set import_robin_flux [::Ermes::GetValueForName Import_Robin_flux]
     if { $import_robin_flux == "On" } {
         ::Ermes::WriteGeneralVariable Import_Robin_flux Import_Robin_On
@@ -145,7 +145,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         ::Ermes::WriteGeneralVariable Import_Robin_flux Import_Robin_Off
     }
 
-###################  Import J currents from files  ###########################
+ ###################  Import J currents from files  ###########################
     set import_j_currents [::Ermes::GetValueForName Import_J_currents]
     if { $import_j_currents == "On" } {
         ::Ermes::WriteGeneralVariable Import_J_currents Import_J_On
@@ -153,7 +153,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         ::Ermes::WriteGeneralVariable Import_J_currents Import_J_Off
     }
 
-############  Import volumetric element matrices from files  #################
+ ############  Import volumetric element matrices from files  #################
     set import_ele_matrix [::Ermes::GetValueForName Import_ele_matrix]
     if { $import_ele_matrix == "On" } {
         ::Ermes::WriteGeneralVariable Import_ele_matrix Import_VEM_On
@@ -161,7 +161,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         ::Ermes::WriteGeneralVariable Import_ele_matrix Import_VEM_Off
     }
 
-####################  Write results fields on files  #########################
+ ####################  Write results fields on files  #########################
     set export_fields [::Ermes::GetValueForName Export_fields]
     if { $export_fields == "On" } {
         ::Ermes::WriteGeneralVariable Export_fields Export_Fields_On
@@ -169,7 +169,7 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         ::Ermes::WriteGeneralVariable Export_fields Export_Fields_Off
     }
 
-##########################  Output file format  ##############################
+ ##########################  Output file format  ##############################
     set output_format [::Ermes::GetValueForName Output_format]
     if { $output_format == "Ascii" } {
         ::Ermes::WriteGeneralVariable Output_format Results_Format_Ascii
@@ -177,11 +177,11 @@ proc ::Ermes::WriteGeneralInformation { filename } {
         ::Ermes::WriteGeneralVariable Output_format Results_Format_Binary
     }
 
-######################  Number of parallel procesess  ########################
+ ######################  Number of parallel procesess  ########################
     set processors [::Ermes::GetValueForName Processors]
     ::Ermes::WriteGeneralVariable Processors "${processors}pr"
 
-############################  Problem frequency  #############################
+ ############################  Problem frequency  #############################
     if { $sweep_frequency_mode == "0" } {
         set complex_frequency_mode [::Ermes::GetValueForName Complex_frequency_mode]
         if { $complex_frequency_mode == "1" && $problem_mode == "Full_wave" } {

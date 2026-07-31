@@ -76,6 +76,7 @@ proc ::Ermes::LoadScripts { dir } {
     source $dir/scripts/write/write.tcl
     source $dir/scripts/write/00_write_generaldata.tcl
     source $dir/scripts/write/01_write_nodaldata.tcl
+    source $dir/scripts/write/02_write_nodalvoltages.tcl
     source $dir/scripts/write/validate.tcl
 }
 
