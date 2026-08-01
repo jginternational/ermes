@@ -70,6 +70,7 @@ proc ::Ermes::ModifyMenus { } {
     GiDMenu::UpdateMenus
 }
 
+# ::Ermes::LoadScripts [::Ermes::GetDir]
 proc ::Ermes::LoadScripts { dir } {
     source $dir/scripts/toolbar.tcl
     source $dir/scripts/tree.tcl
@@ -78,7 +79,9 @@ proc ::Ermes::LoadScripts { dir } {
     source $dir/scripts/write/01_write_nodaldata.tcl
     source $dir/scripts/write/02_write_nodalvoltages.tcl
     source $dir/scripts/write/03_write_nodalsingular.tcl
+    source $dir/scripts/write/04_write_volumeelements.tcl
     source $dir/scripts/write/validate.tcl
+    source $dir/scripts/overwrite_functions.tcl
 }
 
 

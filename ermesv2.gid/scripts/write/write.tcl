@@ -22,4 +22,7 @@ proc ::Ermes::WriteCalculationFiles { filename } {
     # Write singular nodes
     ::Ermes::WriteNodalSingular $filename
 
+    # Write volume elements
+    ::Ermes::WriteVolumeElements $filename
+
 }
